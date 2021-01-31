@@ -1,0 +1,4 @@
+C:\Users\radia\source\repos\gs2d-v1\gs2d-v1\bin\Debug\netcoreapp3.1\gs2d-v1.exe
+C:\Users\radia\source\repos\gs2d-v1\gs2d-v1\obj\Debug\netcoreapp3.1\gs2d-v1.csprojAssemblyReference.cache
+C:\Users\radia\source\repos\gs2d-v1\gs2d-v1\obj\Debug\netcoreapp3.1\gs2d-v1.AssemblyInfoInputs.cache
+C:\Users\radia\source\repos\gs2d-v1\gs2d-v1\obj\Debug\netcoreapp3.1\gs2d-v1.AssemblyInfo.cs
