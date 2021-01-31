@@ -755,7 +755,7 @@ namespace gs2d
         {
             byte[] command = new byte[3] { (byte)(0b11000000 | id), 3, 0 };
 
-            currentLimit = (int)(currentLimit * 10);
+            currentLimit = (int)(currentLimit / 100);
 
             // Positionの値チェック
             if (currentLimit < 1) currentLimit = 1;
