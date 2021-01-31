@@ -1,9 +1,0 @@
-C:\Users\radia\source\repos\gs2d-v1\gs2d\bin\Debug\netcoreapp3.1\gs2d.deps.json
-C:\Users\radia\source\repos\gs2d-v1\gs2d\bin\Debug\netcoreapp3.1\gs2d.dll
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.AssemblyInfoInputs.cache
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.AssemblyInfo.cs
-C:\Users\radia\source\repos\gs2d-v1\gs2d\bin\Debug\netcoreapp3.1\gs2d.pdb
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.csproj.CoreCompileInputs.cache
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.dll
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.pdb
-C:\Users\radia\source\repos\gs2d-v1\gs2d\obj\Debug\netcoreapp3.1\gs2d.csprojAssemblyReference.cache
