@@ -49,8 +49,8 @@ namespace gs2d
             public const byte DGain = 0x66;
 
             public const byte TemperatureLimit = 0x0E;
-            public const byte CCWLimit = 0x07;
-            public const byte CWLimit = 0x05;
+            public const byte CCWLimit = 0x05;
+            public const byte CWLimit = 0x07;
             public const byte CurrentLimit = 0x11;
 
         }
@@ -829,7 +829,7 @@ namespace gs2d
                 if (response != null && response.Length == 2)
                 {
                     int position = BitConverter.ToInt16(response);
-                    return position / 100.0;
+                    return -position / 100.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -846,7 +846,7 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
-            int position = (int)(cwLimit * 100.0);
+            ushort position = (ushort)(short)(-cwLimit * 100.0);
 
             // パラメータ生成
             byte[] param = new byte[4] { (byte)(position & 0xFF), (byte)((position >> 8) & 0xFF), Address.CWLimit, 0x01 };
@@ -869,7 +869,7 @@ namespace gs2d
                 if (response != null && response.Length == 2)
                 {
                     int position = BitConverter.ToInt16(response);
-                    return position / 100.0;
+                    return -position / 100.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -886,7 +886,7 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
-            int position = (int)(ccwLimit * 100.0);
+            ushort position = (ushort)(short)(-ccwLimit * 100.0);
 
             // パラメータ生成
             byte[] param = new byte[4] { (byte)(position & 0xFF), (byte)((position >> 8) & 0xFF), Address.CCWLimit, 0x01 };
