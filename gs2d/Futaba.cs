@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO.Ports;
@@ -227,7 +224,7 @@ namespace gs2d
                 if (response != null && response.Length == 3)
                 {
                     Dictionary<string, ushort> res = new Dictionary<string, ushort>();
-                    res.Add("modelNumber", BitConverter.ToUInt16(response.Take(2).ToArray()));
+                    res.Add("modelNumber", BitConverter.ToUInt16(response.Take(2).ToArray(), 0));
                     res.Add("firmwareVersion", response[2]);
                     return res;
                 }
@@ -274,7 +271,7 @@ namespace gs2d
 
             Func<byte[], ushort> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response);
+                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response, 0);
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -293,7 +290,7 @@ namespace gs2d
 
             Func<byte[], int> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response);
+                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response, 0);
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -312,7 +309,7 @@ namespace gs2d
 
             Func<byte[], double> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response) / 100.0;
+                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response, 0) / 100.0;
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -331,7 +328,7 @@ namespace gs2d
 
             Func<byte[], double> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return -BitConverter.ToInt16(response) / 10.0;
+                if (response != null && response.Length == 2) return -BitConverter.ToInt16(response, 0) / 10.0;
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -411,7 +408,7 @@ namespace gs2d
 
             Func<byte[], double> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response) / 100.0;
+                if (response != null && response.Length == 2) return BitConverter.ToUInt16(response, 0) / 100.0;
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -541,7 +538,7 @@ namespace gs2d
 
             Func<byte[], double> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return BitConverter.ToInt16(response);
+                if (response != null && response.Length == 2) return BitConverter.ToInt16(response, 0);
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
@@ -654,7 +651,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return -BitConverter.ToInt16(response) / 10.0;
+                    return -BitConverter.ToInt16(response, 0) / 10.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -691,7 +688,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return -BitConverter.ToInt16(response) / 10.0;
+                    return -BitConverter.ToInt16(response, 0) / 10.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -728,7 +725,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return BitConverter.ToInt16(response);
+                    return BitConverter.ToInt16(response, 0);
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };

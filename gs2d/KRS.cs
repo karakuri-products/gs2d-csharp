@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO.Ports;

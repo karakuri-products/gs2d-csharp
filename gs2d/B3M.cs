@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO.Ports;
@@ -790,7 +787,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    uint baudrate = BitConverter.ToUInt32(response);
+                    uint baudrate = BitConverter.ToUInt32(response, 0);
                     return (int)baudrate;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -828,7 +825,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    int position = BitConverter.ToInt16(response);
+                    int position = BitConverter.ToInt16(response, 0);
                     return -position / 100.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -868,7 +865,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    int position = BitConverter.ToInt16(response);
+                    int position = BitConverter.ToInt16(response, 0);
                     return -position / 100.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -908,7 +905,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    int limit = BitConverter.ToInt16(response);
+                    int limit = BitConverter.ToInt16(response, 0);
                     return limit / 100;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -948,7 +945,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return (int)(BitConverter.ToInt16(response));
+                    return (int)(BitConverter.ToInt16(response, 0));
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };

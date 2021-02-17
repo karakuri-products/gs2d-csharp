@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO.Ports;
@@ -380,7 +377,7 @@ namespace gs2d
             checkId(id);
 
             // パラメータ生成
-            byte[] param = generateParameters((byte)address, BitConverter.ToUInt32(data), (byte)data.Length);
+            byte[] param = generateParameters((byte)address, BitConverter.ToUInt32(data, 0), (byte)data.Length);
             getFunction<byte[]>(id, Instructions.Write, param, null, defaultWriteCallback);
         }
 
@@ -429,7 +426,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    return (BitConverter.ToUInt32(response) * 360.0 / 4096.0 - 180.0);
+                    return (BitConverter.ToUInt32(response, 0) * 360.0 / 4095.0 - 180.0);
 
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -454,7 +451,7 @@ namespace gs2d
             else if (position < -180.0) position = -180.0;
 
             // パラメータ生成
-            byte[] param = generateParameters(Address.GoalPosition, (uint)((position + 180.0) * 4096.0 / 360.0), 4);
+            byte[] param = generateParameters(Address.GoalPosition, (uint)((position + 180.0) * 4095.0 / 360.0), 4);
             getFunction<byte[]>(id, Instructions.Write, param, null, defaultWriteCallback);
         }
 
@@ -470,7 +467,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 3)
                 {
-                    ushort modelNumber = BitConverter.ToUInt16(response.Take(2).ToArray());
+                    ushort modelNumber = BitConverter.ToUInt16(response.Take(2).ToArray(), 0);
                     ushort firmwareVersion = response[2];
                     return new Dictionary<string, ushort>()
                     {
@@ -530,7 +527,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    int current = (int)(BitConverter.ToUInt16(response) * 2.69);
+                    int current = (int)(BitConverter.ToUInt16(response, 0) * 2.69);
                     return current;
 
                 }
@@ -558,7 +555,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    double voltage = BitConverter.ToUInt16(response) / 10.0;
+                    double voltage = BitConverter.ToUInt16(response, 0) / 10.0;
                     return voltage;
 
                 }
@@ -586,7 +583,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    double position = BitConverter.ToInt32(response) * 360.0 / 4096.0 - 180.0;
+                    double position = BitConverter.ToInt32(response, 0) * 360.0 / 4095.0 - 180.0;
                     return position;
 
                 }
@@ -614,7 +611,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    double offset = BitConverter.ToInt32(response) * 0.088;
+                    double offset = BitConverter.ToInt32(response, 0) * 0.088;
                     return offset;
 
                 }
@@ -671,7 +668,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    double targetTime = BitConverter.ToUInt32(response) / 1000.0;
+                    double targetTime = BitConverter.ToUInt32(response, 0) / 1000.0;
                     return targetTime;
 
                 }
@@ -713,7 +710,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    double targetTime = BitConverter.ToUInt32(response) / 1000.0;
+                    double targetTime = BitConverter.ToUInt32(response, 0) / 1000.0;
                     return targetTime;
 
                 }
@@ -755,7 +752,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return BitConverter.ToUInt16(response);
+                    return BitConverter.ToUInt16(response, 0);
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -794,7 +791,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return BitConverter.ToUInt16(response);
+                    return BitConverter.ToUInt16(response, 0);
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -833,7 +830,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return BitConverter.ToUInt16(response);
+                    return BitConverter.ToUInt16(response, 0);
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -886,7 +883,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    return BitConverter.ToUInt32(response) * 0.229 * 6;
+                    return BitConverter.ToUInt32(response,0 ) * 0.229 * 6;
 
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -1032,7 +1029,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    return BitConverter.ToUInt32(response) * 360.0 / 4096.0 - 180;
+                    return BitConverter.ToUInt32(response, 0) * 360.0 / 4095.0 - 180;
 
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -1055,7 +1052,7 @@ namespace gs2d
             {
                 throw new BadInputParametersException("cwLimitがレンジ外です");
             }
-            cwLimit = (cwLimit + 180) / 360.0 * 4096.0;
+            cwLimit = (cwLimit + 180) / 360.0 * 4095.0;
 
             // パラメータ生成
             byte[] param = generateParameters(Address.MinPositionLimit, (uint)(cwLimit), 4);
@@ -1075,7 +1072,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    return BitConverter.ToUInt32(response) * 360.0 / 4096.0 - 180;
+                    return BitConverter.ToUInt32(response, 0) * 360.0 / 4095.0 - 180;
 
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
@@ -1098,7 +1095,7 @@ namespace gs2d
             {
                 throw new BadInputParametersException("cwLimitがレンジ外です");
             }
-            ccwLimit = (ccwLimit + 180) / 360.0 * 4096.0;
+            ccwLimit = (ccwLimit + 180) / 360.0 * 4095.0;
 
             // パラメータ生成
             byte[] param = generateParameters(Address.MaxPositionLimit, (uint)(ccwLimit), 4);
@@ -1160,7 +1157,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 2)
                 {
-                    return (int)(BitConverter.ToInt16(response) * 2.69);
+                    return (int)(BitConverter.ToInt16(response, 0) * 2.69);
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -1257,7 +1254,7 @@ namespace gs2d
             {
                 if (response != null && response.Length == 4)
                 {
-                    return BitConverter.ToInt32(response) * 360.0 / 4096.0 - 180.0;
+                    return BitConverter.ToInt32(response, 0) * 360.0 / 4095.0 - 180.0;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
@@ -1282,7 +1279,7 @@ namespace gs2d
                 else if (deg > 180) deg = 180;
                 deg += 180;
 
-                idPositionListInt.Add(item.Key, (int)(deg * 4096.0 / 360.0));
+                idPositionListInt.Add(item.Key, (int)(deg * 4095.0 / 360.0));
             }
 
             byte[] param = generateParametersSyncWrite(Address.GoalPosition, 4, idPositionListInt);

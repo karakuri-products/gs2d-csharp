@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace gs2d
