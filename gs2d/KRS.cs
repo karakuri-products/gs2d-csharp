@@ -73,8 +73,8 @@ namespace gs2d
                 byte[] responseData;
 
                 // コマンドから必要なデータを抜き出し
-                byte command = (byte)((response[0] & 0b11100000) >> 5);
-                switch (command)
+                byte header = (byte)((response[0] & 0b11100000) >> 5);
+                switch (header)
                 {
                     case 0: responseData = response.Skip(1).Take(2).ToArray(); break;
                     case 1:

@@ -361,7 +361,7 @@ namespace gs2d
 
             Func<byte[], double> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 2) return -BitConverter.ToInt16(response) / 10.0;
+                if (response != null && response.Length == 2) return -BitConverter.ToInt16(response, 0) / 10.0;
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
 
