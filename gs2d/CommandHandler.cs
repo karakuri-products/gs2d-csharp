@@ -77,9 +77,6 @@ namespace gs2d
             // シリアルポートを登録
             serialPort = extSerialPort;
 
-            // 受信イベントを追加
-            serialPort.DataReceived += DataReceivedHandler;
-
             // タイムアウト用タイマを設定
             timeoutTimer = new System.Timers.Timer();
 
@@ -87,17 +84,11 @@ namespace gs2d
             timeoutTimer.Elapsed += async (s, e) => {
                 await Task.Run(() =>
                 {
-                    // 受信イベントを一旦削除
-                    serialPort.DataReceived -= DataReceivedHandler;
-
                     // タイムアウトハンドラを呼び出し
                     if (TimeoutEvent != null) TimeoutEvent.Invoke();
 
                     // コマンドキューから削除
                     commandQueue.RemoveAt(0);
-
-                    // 受信イベントを再度追加
-                    serialPort.DataReceived += DataReceivedHandler;
 
                     // キューに続きがある場合は送信開始
                     if (commandQueue.Count != 0) SendCommand();
@@ -112,6 +103,8 @@ namespace gs2d
             };
             timeoutTimer.AutoReset = false;
             timeoutTimer.Enabled = false;
+
+            Task.Run(() => { DataReceivedHandler(); });
         }
 
         /// <summary>
@@ -180,54 +173,62 @@ namespace gs2d
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private async void DataReceivedHandler()
         {
-            SerialPort sp = (SerialPort)sender;
-            byte buf;
-            byte[] receiveData = new byte[100];
-            int length;
-
-            // 100バイト以下受信
-            length = sp.Read(receiveData, 0, 100);
-
-            // 無意味なデータを無視
-            if (isTrafficFree) return;
-
-            for(int pos = 0; pos < length; pos++)
+            while (true)
             {
-                // 受信データを1Byteバッファに保存
-                receiveBuffer[receivePos++] = receiveData[pos];
+                SerialPort sp = serialPort;
+                byte buf;
+                byte[] receiveData = new byte[100];
+                int length = 0;
 
-                // 受信完了チェック
-                if (isCompleteResponse(receiveBuffer.Take((int)receivePos).ToArray()))
+                // 100バイト以下受信
+                await Task.Run(() =>
                 {
-                    // タイマ停止
-                    timeoutTimer.Enabled = false;
- 
-                    // コールバックを呼び出し
-                    currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
+                    length = sp.Read(receiveData, 0, 100);
+                });
 
-                    // 全サーボ受信完了チェック
-                    currentCommand.servoCount--;
-                    if (currentCommand.servoCount == 0)
+                // 無意味なデータを無視
+                if (isTrafficFree) return;
+
+                for (int pos = 0; pos < length; pos++)
+                {
+                    // 受信データを1Byteバッファに保存
+                    receiveBuffer[receivePos++] = receiveData[pos];
+
+                    // 受信完了チェック
+                    if (isCompleteResponse(receiveBuffer.Take((int)receivePos).ToArray()))
                     {
-                        // コマンドキューから削除
-                        commandQueue.RemoveAt(0);
+                        // タイマ停止
+                        timeoutTimer.Enabled = false;
 
-                        // キューに続きがある場合は送信開始
-                        if (commandQueue.Count != 0) SendCommand();
-                        else isTrafficFree = true;
-                    }
-                    else
-                    {
-                        // 受信バッファの初期化
-                        Array.Clear(receiveBuffer, 0, 100);
-                        receivePos = 0;
+                        // コールバックを呼び出し
+                        currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
 
-                        // タイムアウトタイマを初期化
-                        StartTimeoutTimer();
+                        // 全サーボ受信完了チェック
+                        currentCommand.servoCount--;
+                        if (currentCommand.servoCount == 0)
+                        {
+                            // コマンドキューから削除
+                            commandQueue.RemoveAt(0);
+
+                            // キューに続きがある場合は送信開始
+                            if (commandQueue.Count != 0) SendCommand();
+                            else isTrafficFree = true;
+                        }
+                        else
+                        {
+                            // 受信バッファの初期化
+                            Array.Clear(receiveBuffer, 0, 100);
+                            receivePos = 0;
+
+                            // タイムアウトタイマを初期化
+                            StartTimeoutTimer();
+                        }
                     }
                 }
+
+                await Task.Delay(1).ConfigureAwait(false);
             }
         }
     }
