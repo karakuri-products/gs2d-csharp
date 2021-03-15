@@ -36,8 +36,8 @@ namespace gs2d
         }
 
         // ------------------------------------------------------------------------------------------
-        virtual internal void Close() { serialPort.Close(); }
-        virtual internal void Open(int baudrate, string portName, Parity parity = Parity.None)
+        virtual public void Close() { serialPort.Close(); }
+        virtual public void Open(int baudrate, string portName, Parity parity = Parity.None)
         {
             // Serial Port
             serialPort = new SerialPort();
