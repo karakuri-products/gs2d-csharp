@@ -60,6 +60,10 @@ namespace gs2d
         // 処理ステータス
         private bool isTrafficFree = true;
 
+        // スレッド操作用
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();                 // Aさん：仕事1をやめる時の条件を作っておくよ
+        internal CancellationToken token;
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -104,7 +108,8 @@ namespace gs2d
             timeoutTimer.AutoReset = false;
             timeoutTimer.Enabled = false;
 
-            Task.Run(() => { DataReceivedHandler(); });
+            token = tokenSource.Token;
+            Task.Run(() => { DataReceivedHandler(token); });
         }
 
         /// <summary>
@@ -120,6 +125,11 @@ namespace gs2d
 
             // 通信中でなければ送信開始
             if (isTrafficFree) SendCommand();
+        }
+
+        internal void Stop()
+        {
+            tokenSource.Cancel();
         }
 
         /// <summary>
@@ -173,7 +183,7 @@ namespace gs2d
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void DataReceivedHandler()
+        private async void DataReceivedHandler(CancellationToken cancelToken)
         {
             while (true)
             {
@@ -181,6 +191,11 @@ namespace gs2d
                 byte buf;
                 byte[] receiveData = new byte[100];
                 int length = 0;
+
+                if (cancelToken.IsCancellationRequested)
+                {
+                    return;
+                }
 
                 // 100バイト以下受信
                 await Task.Run(() =>

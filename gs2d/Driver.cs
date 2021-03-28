@@ -36,7 +36,7 @@ namespace gs2d
         }
 
         // ------------------------------------------------------------------------------------------
-        virtual public void Close() { serialPort.Close(); }
+        virtual public void Close() { commandHandler.Stop(); serialPort.Close();  }
         virtual public void Open(int baudrate, string portName, Parity parity = Parity.None)
         {
             // Serial Port
