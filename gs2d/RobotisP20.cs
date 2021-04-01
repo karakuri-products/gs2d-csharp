@@ -397,7 +397,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction(id, Instructions.Read, param, responseProcess);
+            return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<byte> ReadTorqueEnableAsync(byte id, Action<byte> callback = null)
         {
@@ -433,7 +433,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction(id, Instructions.Read, param, responseProcess);
+            return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
 
         public override async Task<double> ReadTargetPositionAsync(byte id, Action<double> callback = null)
@@ -507,7 +507,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<ushort>(id, Instructions.Read, param, responseProcess);
+            return getFunction<ushort>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<ushort> ReadTemperatureAsync(byte id, Action<ushort> callback = null)
         {
@@ -535,7 +535,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadCurrentAsnyc(byte id, Action<int> callback = null)
         {
@@ -563,7 +563,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadVoltageAsnyc(byte id, Action<double> callback = null)
         {
@@ -591,7 +591,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadCurrentPositionAsnyc(byte id, Action<double> callback = null)
         {
@@ -619,7 +619,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadOffsetAsnyc(byte id, Action<double> callback = null)
         {
@@ -676,7 +676,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadTargetTimeAsnyc(byte id, Action<double> callback = null)
         {
@@ -718,7 +718,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadAccelTimeAsnyc(byte id, Action<double> callback = null)
         {
@@ -758,7 +758,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadPGainAsnyc(byte id, Action<int> callback = null)
         {
@@ -797,7 +797,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadIGainAsnyc(byte id, Action<int> callback = null)
         {
@@ -836,7 +836,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadDGainAsnyc(byte id, Action<int> callback = null)
         {
@@ -890,7 +890,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadSpeedAsnyc(byte id, Action<double> callback = null)
         {
@@ -931,11 +931,11 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadIDAsync(byte id, Action<int> callback = null)
         {
-            return await Task.Run(() => ReadIDAsync(id, callback));
+            return await Task.Run(() => ReadID(id, callback));
         }
         public override void WriteID(byte id, int servoid)
         {
@@ -987,7 +987,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadBaudrateAsync(byte id, Action<int> callback = null)
         {
@@ -1036,7 +1036,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadLimitCWPositionAsnyc(byte id, Action<double> callback = null)
         {
@@ -1079,7 +1079,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<double>(id, Instructions.Read, param, responseProcess);
+            return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<double> ReadLimitCCWPositionAsnyc(byte id, Action<double> callback = null)
         {
@@ -1122,7 +1122,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadLimitTemperatureAsync(byte id, Action<int> callback = null)
         {
@@ -1163,7 +1163,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadLimitCurrentAsync(byte id, Action<int> callback = null)
         {
@@ -1207,7 +1207,7 @@ namespace gs2d
             };
 
             // 送信
-            return getFunction<int>(id, Instructions.Read, param, responseProcess);
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
         public override async Task<int> ReadDriveModeAsync(byte id, Action<int> callback = null)
         {
