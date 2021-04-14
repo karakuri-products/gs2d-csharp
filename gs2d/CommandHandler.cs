@@ -53,6 +53,7 @@ namespace gs2d
 
         // タイムアウト処理用関数
         public event Action TimeoutEvent;
+        private bool timeoutFlag = false;
 
         // タイムアウト監視用タイマ
         internal System.Timers.Timer timeoutTimer;
@@ -90,19 +91,7 @@ namespace gs2d
                 {
                     // タイムアウトハンドラを呼び出し
                     if (TimeoutEvent != null) TimeoutEvent.Invoke();
-
-                    // コマンドキューから削除
-                    commandQueue.RemoveAt(0);
-
-                    // キューに続きがある場合は送信開始
-                    if (commandQueue.Count != 0) SendCommand();
-                    else
-                    {
-                        // タイマ停止
-                        timeoutTimer.Enabled = false;
-                        // バスを開放
-                        isTrafficFree = true;
-                    }
+                    timeoutFlag = true;
                 });
             };
             timeoutTimer.AutoReset = false;
@@ -122,9 +111,6 @@ namespace gs2d
         {
             // コマンドキューにコマンドを追加
             commandQueue.Add(new CommandBufferType(data, receiveCallback, servoCount));
-
-            // 通信中でなければ送信開始
-            if (isTrafficFree) SendCommand();
         }
 
         internal void Stop()
@@ -140,6 +126,8 @@ namespace gs2d
             // 送信不可なら何もせず終了
             if (!serialPort.IsOpen) return;
 
+            isTrafficFree = false;
+
             // 受信バッファを初期化
             Array.Clear(receiveBuffer, 0, 100);
             receivePos = 0;
@@ -148,11 +136,10 @@ namespace gs2d
             currentCommand = commandQueue[0];
             serialPort.Write(currentCommand.data, 0, currentCommand.data.Length);
 
+
             // バスを使用中に切り替え
             if (currentCommand.callback != null && currentCommand.servoCount != 0)
             {
-                isTrafficFree = false;
-
                 // タイマの再起動
                 // ToDo : 処理の見直し
                 StartTimeoutTimer();
@@ -197,17 +184,45 @@ namespace gs2d
                     return;
                 }
 
+                if(timeoutFlag)
+                {
+                    // コマンドキューから削除
+                    commandQueue.RemoveAt(0);
+
+                    // キューに続きがある場合は送信開始
+                    if (commandQueue.Count != 0) SendCommand();
+                    else
+                    {
+                        // タイマ停止
+                        timeoutTimer.Enabled = false;
+                        // バスを開放
+                        isTrafficFree = true;
+                    }
+
+                    timeoutFlag = false;
+                }
+
+                // 無意味なデータを無視
+                if (isTrafficFree)
+                {
+                    if (commandQueue.Count != 0) SendCommand();
+                    else continue;
+                }
+
                 // 100バイト以下受信
                 await Task.Run(() =>
                 {
-                    length = sp.Read(receiveData, 0, 100);
+                    // TODO ここのエラーをどうするか考える
+                    try
+                    {
+                        length = sp.Read(receiveData, 0, 100);
+                    }
+                    catch (Exception ex) { }
                 });
-
-                // 無意味なデータを無視
-                if (isTrafficFree) return;
 
                 for (int pos = 0; pos < length; pos++)
                 {
+
                     // 受信データを1Byteバッファに保存
                     receiveBuffer[receivePos++] = receiveData[pos];
 
@@ -217,13 +232,13 @@ namespace gs2d
                         // タイマ停止
                         timeoutTimer.Enabled = false;
 
-                        // コールバックを呼び出し
-                        currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
-
                         // 全サーボ受信完了チェック
                         currentCommand.servoCount--;
                         if (currentCommand.servoCount == 0)
                         {
+                            // コールバックを呼び出し
+                            currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
+
                             // コマンドキューから削除
                             commandQueue.RemoveAt(0);
 
@@ -242,8 +257,6 @@ namespace gs2d
                         }
                     }
                 }
-
-                await Task.Delay(1).ConfigureAwait(false);
             }
         }
     }

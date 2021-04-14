@@ -113,27 +113,36 @@ namespace gs2d
             bool isReceived = false;
             T data = default(T);
 
+            int error = 0;
+
             // 受信用コールバック
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
                 byte[] responseData = null;
 
-                // 長さが正しいか確認
-                if (response.Length != response[0]) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // CheckSum検証
-                if (calculateCheckSum(response) != response[response.Length - 1]) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // Paramがあれば切りだし
-                if (response.Length > 5)
+                do
                 {
-                    responseData = new byte[response.Length - 5];
-                    Array.Copy(response, 4, responseData, 0, responseData.Length);
-                }
+                    // 長さが正しいか確認
+                    if (response.Length != response[0]) { error = 1; break; }
+
+                    // CheckSum検証
+                    if (calculateCheckSum(response) != response[response.Length - 1]) { error = 1; break; }
+
+                    // Paramがあれば切りだし
+                    if (response.Length > 5)
+                    {
+                        responseData = new byte[response.Length - 5];
+                        Array.Copy(response, 4, responseData, 0, responseData.Length);
+                    }
+                } while (false);
 
                 // データを処理
-                if (responseProcess != null) data = (T)(object)responseProcess(responseData);
-                else data = (T)(object)responseData;
+                // 例外はTODO
+                try
+                {
+                    if (responseProcess != null) data = (T)(object)responseProcess(responseData);
+                    else data = (T)(object)responseData;
+                }catch(Exception ex) { }
 
                 // 終了処理
                 if (callback != null) callback(data);
@@ -157,6 +166,8 @@ namespace gs2d
 
             // タイムアウトイベントを削除
             TimeoutCallbackEvent -= timeoutEvent;
+
+            if(error != 0) throw new InvalidResponseDataException("サーボからの返答が不正です");
 
             return data;
         }
@@ -317,7 +328,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadCurrentAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadCurrentAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadCurrent(id, callback));
         }
@@ -340,7 +351,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadVoltageAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadVoltageAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadVoltage(id, callback));
         }
@@ -407,7 +418,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadCurrentPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadCurrentPosition(id, callback));
         }
@@ -434,7 +445,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadOffsetAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadOffsetAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadOffset(id, callback));
         }
@@ -474,7 +485,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadDeadbandAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadDeadband(id, callback));
         }
@@ -514,7 +525,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadTargetTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadTargetTime(id, callback));
         }
@@ -537,7 +548,7 @@ namespace gs2d
         {
             throw new NotSupportedException("B3MではReadAccelTimeに対応していません。");
         }
-        public override async Task<double> ReadAccelTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null)
         {
             throw new NotSupportedException("B3MではReadAccelTimeAsyncに対応していません。");
         }
@@ -568,7 +579,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadPGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadPGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadPGain(id, callback));
         }
@@ -606,7 +617,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadIGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadIGain(id, callback));
         }
@@ -644,7 +655,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadDGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadDGain(id, callback));
         }
@@ -665,7 +676,7 @@ namespace gs2d
         {
             throw new NotSupportedException("B3MではReadMaxTorqueに対応していません。");
         }
-        public override async Task<int> ReadMaxTorqueAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null)
         {
             throw new NotSupportedException("B3MではReadMaxTorqueAsyncに対応していません。");
         }
@@ -696,7 +707,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadSpeedAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadSpeedAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadSpeed(id, callback));
         }
@@ -834,7 +845,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCWPosition(id, callback));
         }
@@ -874,7 +885,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCCWPosition(id, callback));
         }

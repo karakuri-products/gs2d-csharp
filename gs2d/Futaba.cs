@@ -148,23 +148,33 @@ namespace gs2d
             bool isReceived = false;
             T receiveData = default(T);
 
+            int error = 0;
+
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
                 byte[] responseData = null;
 
                 // チェックサムを確認
-                if (response[response.Length - 1] != calculateCheckSum(response))
+                do
                 {
-                    throw new InvalidResponseDataException("サーボからの返答が不正です");
-                }
+                    if (response[response.Length - 1] != calculateCheckSum(response))
+                    {
+                        error = 1; break;
+                    }
 
-                if (response.Length > 7 + length)
+                    if (response.Length > 7 + length)
+                    {
+                        responseData = response.Skip(7).Take(length).ToArray();
+                    }
+                } while (false);
+
+                // 例外はTODO
+                try
                 {
-                    responseData = response.Skip(7).Take(length).ToArray();
+                    if (responseProcess != null) receiveData = (T)(object)responseProcess(responseData);
+                    else receiveData = (T)(object)responseData;
                 }
-
-                if (responseProcess != null) receiveData = (T)(object)responseProcess(responseData);
-                else receiveData = (T)(object)responseData;
+                catch (Exception ex) { }
 
                 if (callback != null) callback(receiveData);
 
@@ -187,6 +197,8 @@ namespace gs2d
 
             // タイムアウトイベントを削除
             TimeoutCallbackEvent -= timeoutEvent;
+
+            if(error != 0) throw new InvalidResponseDataException("サーボからの返答が不正です");
 
             return receiveData;
         }
@@ -296,7 +308,7 @@ namespace gs2d
 
             return getFunction(id, Address.Current, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<int> ReadCurrentAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadCurrentAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadCurrent(id, callback));
         }
@@ -315,7 +327,7 @@ namespace gs2d
 
             return getFunction(id, Address.Voltage, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadVoltageAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadVoltageAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadVoltage(id, callback));
         }
@@ -367,7 +379,7 @@ namespace gs2d
 
             return getFunction(id, Address.CurrentPosition, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadCurrentPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadCurrentPosition(id, callback));
         }
@@ -377,7 +389,7 @@ namespace gs2d
         {
             throw new NotSupportedException("FutabaではReadOffsetに対応していません。");
         }
-        public override async Task<double> ReadOffsetAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadOffsetAsync(byte id, Action<double> callback = null)
         {
             throw new NotSupportedException("FutabaではReadOffsetAsyncに対応していません。");
         }
@@ -391,7 +403,7 @@ namespace gs2d
         {
             throw new NotSupportedException("FutabaではReadDeadbandに対応していません。");
         }
-        public override async Task<double> ReadDeadbandAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null)
         {
             throw new NotSupportedException("FutabaではReadDeadbandAsyncに対応していません。");
         }
@@ -414,7 +426,7 @@ namespace gs2d
 
             return getFunction(id, Address.TargetTime, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadTargetTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadTargetTime(id, callback));
         }
@@ -435,7 +447,7 @@ namespace gs2d
         {
             throw new NotSupportedException("FutabaではReadAccelTimeに対応していません。");
         }
-        public override async Task<double> ReadAccelTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null)
         {
             throw new NotSupportedException("FutabaではReadAccelTimeAsyncに対応していません。");
         }
@@ -458,7 +470,7 @@ namespace gs2d
 
             return getFunction(id, Address.PGain, 0xF, 1, null, responseProcess, callback);
         }
-        public override async Task<int> ReadPGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadPGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadPGain(id, callback));
         }
@@ -477,7 +489,7 @@ namespace gs2d
         {
             throw new NotSupportedException("FutabaではReadIGainに対応していません。");
         }
-        public override async Task<int> ReadIGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIGainAsync(byte id, Action<int> callback = null)
         {
             throw new NotSupportedException("FutabaではReadIGainAsyncに対応していません。");
         }
@@ -491,7 +503,7 @@ namespace gs2d
         {
             throw new NotSupportedException("FutabaではReadDGainに対応していません。");
         }
-        public override async Task<int> ReadDGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDGainAsync(byte id, Action<int> callback = null)
         {
             throw new NotSupportedException("FutabaではReadDGainAsyncに対応していません。");
         }
@@ -514,7 +526,7 @@ namespace gs2d
 
             return getFunction(id, Address.MaxTorque, 0xF, 1, null, responseProcess, callback);
         }
-        public override async Task<int> ReadMaxTorqueAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadMaxTorque(id, callback));
         }
@@ -544,7 +556,7 @@ namespace gs2d
 
             return getFunction(id, Address.CurrentSpeed, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadSpeedAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadSpeedAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadSpeed(id, callback));
         }
@@ -658,7 +670,7 @@ namespace gs2d
 
             return getFunction(id, Address.CWLimit, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCWPosition(id, callback));
         }
@@ -695,7 +707,7 @@ namespace gs2d
 
             return getFunction(id, Address.CCWLimit, 0xF, 2, null, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCCWPosition(id, callback));
         }

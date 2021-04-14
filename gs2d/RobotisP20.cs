@@ -209,37 +209,47 @@ namespace gs2d
             bool is_received = false;
             int receivedCount = count;
 
+            int error = 0;
+
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
                 byte[] responseData = null;
 
                 // 最低限の長さがあるか確認
-                if (response.Length < 9) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // インストラクション値を確認
-                if (response[7] != 0x55) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // Lengthを取得して確認
-                int parameterLength = (response[5] + (response[6] << 8));
-                if (response.Length != 7 + parameterLength) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // Errorバイトを確認
-                if (response[8] != 0) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // CheckSum検証
-                ushort checkSum = (ushort)(response[response.Length - 2] + (response[response.Length - 1] << 8));
-                if (checkSum != CRC16.calculate(response, (ushort)(response.Length - 2))) throw new InvalidResponseDataException("チェックサムが不正です");
-
-                // Paramがあれば切りだし
-                if (parameterLength > 4)
+                do
                 {
-                    responseData = new byte[parameterLength - 4];
-                    Array.Copy(response, 9, responseData, 0, parameterLength - 4);
-                }
+                    if (response.Length < 9) { error = 1; break; }
 
-                // データを処理
-                if (responseProcess != null) dataList.Add(response[4], (T)(object)responseProcess(responseData));
-                else dataList.Add(response[4], (T)(object)responseData);
+                    // インストラクション値を確認
+                    if (response[7] != 0x55) { error = 1; break; }
+
+                    // Lengthを取得して確認
+                    int parameterLength = (response[5] + (response[6] << 8));
+                    if (response.Length != 7 + parameterLength) { error = 1; break; }
+
+                    // Errorバイトを確認
+                    if (response[8] != 0) { error = 1; break; }
+
+                    // CheckSum検証
+                    ushort checkSum = (ushort)(response[response.Length - 2] + (response[response.Length - 1] << 8));
+                    if (checkSum != CRC16.calculate(response, (ushort)(response.Length - 2))) { error = 2; break; }
+
+                    // Paramがあれば切りだし
+                    if (parameterLength > 4)
+                    {
+                        responseData = new byte[parameterLength - 4];
+                        Array.Copy(response, 9, responseData, 0, parameterLength - 4);
+                    }
+
+                    // データを処理
+                    // 例外はTODOとして保留
+                    try
+                    {
+                        if (responseProcess != null) dataList.Add(response[4], (T)(object)responseProcess(responseData));
+                        else dataList.Add(response[4], (T)(object)responseData);
+                    }
+                    catch (Exception ex) { }
+                } while (false);
 
                 if(--receivedCount == 0)
                 {
@@ -259,8 +269,8 @@ namespace gs2d
 
             // タイムアウト関数を登録
             Action timeoutEvent = () => {
+                error = 3;
                 is_received = true;
-                //                throw new ReceiveDataTimeoutException("受信タイムアウト");
             };
             TimeoutCallbackEvent += timeoutEvent;
 
@@ -269,6 +279,13 @@ namespace gs2d
 
             // タイムアウトイベントを削除
             TimeoutCallbackEvent -= timeoutEvent;
+
+            switch (error)
+            {
+                case 1: throw new InvalidResponseDataException("サーボからの返答が不正です");
+                case 2: throw new InvalidResponseDataException("チェックサムが不正です");
+                case 3: throw new ReceiveDataTimeoutException("受信タイムアウト");
+            }
 
             return dataList;
         }
@@ -288,43 +305,58 @@ namespace gs2d
             bool is_received = false;
             T data = default(T);
 
+            int error = 0;
+
             // 受信用コールバック
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
                 byte[] responseData = null;
 
-                // 最低限の長さがあるか確認
-                if (response.Length < 9) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // インストラクション値を確認
-                if (response[7] != 0x55) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // Lengthを取得して確認
-                int parameterLength = (response[5] + (response[6] << 8));
-                if (response.Length != 7 + parameterLength) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // Errorバイトを確認
-                if (response[8] != 0) throw new InvalidResponseDataException("サーボからの返答が不正です");
-
-                // CheckSum検証
-                ushort checkSum = (ushort)(response[response.Length - 2] + (response[response.Length - 1] << 8));
-                if (checkSum != CRC16.calculate(response, (ushort)(response.Length - 2))) throw new InvalidResponseDataException("チェックサムが不正です");
-
-                // Paramがあれば切りだし
-                if (parameterLength > 4)
+                do
                 {
-                    responseData = new byte[parameterLength - 4];
-                    Array.Copy(response, 9, responseData, 0, parameterLength - 4);
-                }
+//                    for (int i = 0; i < response.Length; i++) Console.Write(response[i] + ", ");
+//                    Console.WriteLine("");
+                    // 最低限の長さがあるか確認
+                    if (response.Length < 9) { error = 1; break; }
 
-                // データを処理
-                if (responseProcess != null) data = (T)(object)responseProcess(responseData);
-                else data = (T)(object)responseData;
+                    // インストラクション値を確認
+                    if (response[7] != 0x55) { error = 1; break; }
+
+                    // Lengthを取得して確認
+                    int parameterLength = (response[5] + (response[6] << 8));
+                    if (response.Length != 7 + parameterLength) { error = 1; break; }
+
+                    // Errorバイトを確認
+                    if (response[8] != 0) { error = 1; break; }
+
+                    // CheckSum検証
+                    ushort checkSum = (ushort)(response[response.Length - 2] + (response[response.Length - 1] << 8));
+                    if (checkSum != CRC16.calculate(response, (ushort)(response.Length - 2))) { error = 2; break; }
+
+                    // Paramがあれば切りだし
+                    if (parameterLength > 4)
+                    {
+                        responseData = new byte[parameterLength - 4];
+                        Array.Copy(response, 9, responseData, 0, parameterLength - 4);
+                    }
+
+                    // データを処理
+                    // 例外はTODOとして保留
+//                    Console.WriteLine("Callback");
+                    try
+                    {
+                        if (responseProcess != null) data = (T)(object)responseProcess(responseData);
+                        else data = (T)(object)responseData;
+                    }
+                    catch (Exception ex) { }
+
+                } while (false);
 
                 // 終了処理
                 if (callback != null) callback(data);
 
                 is_received = true;
+
             };
 
             // コマンド送信
@@ -332,10 +364,15 @@ namespace gs2d
             commandHandler.AddCommand(command, templateReceiveCallback);
 
             // コールバックがあれば任せて終了
-            if (callback != null) return default(T);
-
+            if (callback != null)
+            {
+                return default(T);
+            }
             // タイムアウト関数を登録
-            Action timeoutEvent = () => { is_received = true; };
+            Action timeoutEvent = () => {
+                error = 3;
+                is_received = true;
+            };
             TimeoutCallbackEvent += timeoutEvent;
 
             // 無ければ受信完了待ち
@@ -343,6 +380,13 @@ namespace gs2d
 
             // タイムアウトイベントを削除
             TimeoutCallbackEvent -= timeoutEvent;
+
+            switch (error)
+            {
+                case 1: throw new InvalidResponseDataException("サーボからの返答が不正です");
+                case 2: throw new InvalidResponseDataException("チェックサムが不正です");
+                case 3: throw new ReceiveDataTimeoutException("受信タイムアウト");
+            }
 
             return data;
         }
@@ -537,7 +581,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadCurrentAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadCurrentAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadCurrent(id, callback));
         }
@@ -565,7 +609,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadVoltageAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadVoltageAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadVoltage(id, callback));
         }
@@ -593,7 +637,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadCurrentPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadCurrentPosition(id, callback));
         }
@@ -621,7 +665,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadOffsetAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadOffsetAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadOffset(id, callback));
         }
@@ -646,7 +690,7 @@ namespace gs2d
         {
             throw new NotSupportedException("RobotisP20ではReadDeadbandに対応していません。");
         }
-        public override Task<double> ReadDeadbandAsnyc(byte id, Action<double> callback = null)
+        public override Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadDeadbandAsyncに対応していません。");
         }
@@ -678,7 +722,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadTargetTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadTargetTime(id, callback));
         }
@@ -720,7 +764,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadAccelTimeAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadAccelTime(id, callback));
         }
@@ -760,7 +804,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadPGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadPGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadPGain(id, callback));
         }
@@ -799,7 +843,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadIGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadIGain(id, callback));
         }
@@ -838,7 +882,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadDGainAsnyc(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDGainAsync(byte id, Action<int> callback = null)
         {
             return await Task.Run(() => ReadDGain(id, callback));
         }
@@ -861,7 +905,7 @@ namespace gs2d
         {
             throw new NotSupportedException("RobotisP20ではReadMaxTorqueに対応していません。");
         }
-        public override Task<int> ReadMaxTorqueAsnyc(byte id, Action<int> callback = null)
+        public override Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadMaxTorqueAsyncに対応していません。");
         }
@@ -892,7 +936,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadSpeedAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadSpeedAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadSpeed(id, callback));
         }
@@ -1038,7 +1082,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCWPosition(id, callback));
         }
@@ -1081,7 +1125,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCCWPositionAsnyc(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null)
         {
             return await Task.Run(() => ReadLimitCCWPosition(id, callback));
         }

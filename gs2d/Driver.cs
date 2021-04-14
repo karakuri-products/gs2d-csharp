@@ -32,7 +32,6 @@ namespace gs2d
         virtual internal void TimeoutCallbackInvoker()
         {
             if (TimeoutCallbackEvent != null) TimeoutCallbackEvent.Invoke();
-            else throw new ReceiveDataTimeoutException("通信がタイムアウトしました");
         }
 
         // ------------------------------------------------------------------------------------------
@@ -49,6 +48,7 @@ namespace gs2d
             serialPort.StopBits = StopBits.One;
             serialPort.Handshake = Handshake.None;
             serialPort.PortName = portName;
+            serialPort.ReadTimeout = 100;
             try
             {
                 serialPort.Open();
@@ -78,11 +78,11 @@ namespace gs2d
 
         // Current
         abstract public int ReadCurrent(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadCurrentAsnyc(byte id, Action<int> callback = null);
+        abstract public Task<int> ReadCurrentAsync(byte id, Action<int> callback = null);
 
         // Voltage
         abstract public double ReadVoltage(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadVoltageAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadVoltageAsync(byte id, Action<double> callback = null);
 
         // Target Position
         abstract public double ReadTargetPosition(byte id, Action<double> callback = null);
@@ -91,51 +91,51 @@ namespace gs2d
 
         // Current Position
         abstract public double ReadCurrentPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadCurrentPositionAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null);
 
         // Offset
         abstract public double ReadOffset(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadOffsetAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadOffsetAsync(byte id, Action<double> callback = null);
         abstract public void WriteOffset(byte id, double offset);
 
         // Deadband
         abstract public double ReadDeadband(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadDeadbandAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null);
         abstract public void WriteDeadband(byte id, double deadband);
 
         // Target Time
         abstract public double ReadTargetTime(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadTargetTimeAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null);
         abstract public void WriteTargetTime(byte id, double targetTime);
 
         // Accel Time
         abstract public double ReadAccelTime(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadAccelTimeAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null);
         abstract public void WriteAccelTime(byte id, double accelTime);
 
         // P Gain
         abstract public int ReadPGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadPGainAsnyc(byte id, Action<int> callback = null);
+        abstract public Task<int> ReadPGainAsync(byte id, Action<int> callback = null);
         abstract public void WritePGain(byte id, int gain);
 
         // I Gain
         abstract public int ReadIGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadIGainAsnyc(byte id, Action<int> callback = null);
+        abstract public Task<int> ReadIGainAsync(byte id, Action<int> callback = null);
         abstract public void WriteIGain(byte id, int gain);
 
         // D Gain
         abstract public int ReadDGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadDGainAsnyc(byte id, Action<int> callback = null);
+        abstract public Task<int> ReadDGainAsync(byte id, Action<int> callback = null);
         abstract public void WriteDGain(byte id, int gain);
 
         // Max Torque
         abstract public int ReadMaxTorque(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadMaxTorqueAsnyc(byte id, Action<int> callback = null);
+        abstract public Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null);
         abstract public void WriteMaxTorque(byte id, int maxTorque);
 
         // Speed
         abstract public double ReadSpeed(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadSpeedAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadSpeedAsync(byte id, Action<double> callback = null);
         abstract public void WriteSpeed(byte id, double speed);
 
         // ID
@@ -155,12 +155,12 @@ namespace gs2d
 
         // CW Limit Position
         abstract public double ReadLimitCWPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadLimitCWPositionAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null);
         abstract public void WriteLimitCWPosition(byte id, double cwLimit);
 
         // CCW Limit Position
         abstract public double ReadLimitCCWPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadLimitCCWPositionAsnyc(byte id, Action<double> callback = null);
+        abstract public Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null);
         abstract public void WriteLimitCCWPosition(byte id, double ccwLimit);
 
         // Temperature Limit
