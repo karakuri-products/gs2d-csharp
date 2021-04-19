@@ -34,6 +34,7 @@ namespace gs2d_sample
 
         void TimeoutEvent()
         {
+            // タイムアウト時は通信用タスクを終了させる
             this.Invoke((MethodInvoker)(() =>
             {
                 tokenSource.Cancel();
@@ -48,6 +49,7 @@ namespace gs2d_sample
 
             comComboBox.Items.Clear();
 
+            // ポート発見/未発見で処理変更
             if(ports.Length == 0)
             {
                 comComboBox.Items.Add("-");
@@ -66,10 +68,6 @@ namespace gs2d_sample
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // 15 ~-15 のGUIソフトを用意
-            // Sinウェーブ
-            // 補完について残す
-
             ReloadComPort();
         }
 
@@ -88,10 +86,10 @@ namespace gs2d_sample
 
                 servo.TimeoutCallbackEvent += TimeoutEvent;
 
-//                servo.WriteTorqueEnable(1, 1);
+                servo.WriteTorqueEnable(1, 1);
                 servo.WriteTorqueEnable(2, 1);
-//                servo.WriteTorqueEnable(3, 1);
-//                servo.WriteTorqueEnable(4, 1);
+                servo.WriteTorqueEnable(3, 1);
+                servo.WriteTorqueEnable(4, 1);
 
                 openButton.Text = "Close";
 
@@ -127,20 +125,20 @@ namespace gs2d_sample
 
         private async Task MainTask(CancellationToken cancelToken)
         {
-            while(!cancelToken.IsCancellationRequested)
+            while (!cancelToken.IsCancellationRequested)
             {
-                /*               servo.ReadTemperature(1, TemperatureCallback1);
-                               servo.WriteTargetPosition(1, targetPosition1);*/
+                servo.ReadTemperature(1, TemperatureCallback1);
+                servo.WriteTargetPosition(1, targetPosition1);
 
                 servo.ReadTemperature(2, TemperatureCallback2);
-                               servo.WriteTargetPosition(2, targetPosition2);
-                               /*
-                                               servo.ReadTemperature(3, TemperatureCallback3);
-                                               servo.WriteTargetPosition(3, targetPosition3);
+                servo.WriteTargetPosition(2, targetPosition2);
 
-                                               servo.ReadTemperature(4, TemperatureCallback4);
-                                               servo.WriteTargetPosition(4, targetPosition4);
-                                               */
+                servo.ReadTemperature(3, TemperatureCallback3);
+                servo.WriteTargetPosition(3, targetPosition3);
+
+                servo.ReadTemperature(4, TemperatureCallback4);
+                servo.WriteTargetPosition(4, targetPosition4);
+
                 await Task.Delay(40);
             }
 
