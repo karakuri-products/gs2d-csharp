@@ -22,6 +22,8 @@ namespace gs2d_sample
         double targetPosition3 = 0.0;
         double targetPosition4 = 0.0;
 
+        uint sinBase = 0;
+
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         internal CancellationToken token;
 
@@ -86,10 +88,10 @@ namespace gs2d_sample
 
                 servo.TimeoutCallbackEvent += TimeoutEvent;
 
-                servo.WriteTorqueEnable(1, 1);
+//                servo.WriteTorqueEnable(1, 1);
                 servo.WriteTorqueEnable(2, 1);
-                servo.WriteTorqueEnable(3, 1);
-                servo.WriteTorqueEnable(4, 1);
+//                servo.WriteTorqueEnable(3, 1);
+//                servo.WriteTorqueEnable(4, 1);
 
                 openButton.Text = "Close";
 
@@ -127,18 +129,18 @@ namespace gs2d_sample
         {
             while(!cancelToken.IsCancellationRequested)
             {
-                servo.ReadTemperature(1, TemperatureCallback1);
-                servo.WriteTargetPosition(1, targetPosition1);
+                /*               servo.ReadTemperature(1, TemperatureCallback1);
+                               servo.WriteTargetPosition(1, targetPosition1);*/
 
                 servo.ReadTemperature(2, TemperatureCallback2);
-                servo.WriteTargetPosition(2, targetPosition2);
+                               servo.WriteTargetPosition(2, targetPosition2);
+                               /*
+                                               servo.ReadTemperature(3, TemperatureCallback3);
+                                               servo.WriteTargetPosition(3, targetPosition3);
 
-                servo.ReadTemperature(3, TemperatureCallback3);
-                servo.WriteTargetPosition(3, targetPosition3);
-
-                servo.ReadTemperature(4, TemperatureCallback4);
-                servo.WriteTargetPosition(4, targetPosition4);
-
+                                               servo.ReadTemperature(4, TemperatureCallback4);
+                                               servo.WriteTargetPosition(4, targetPosition4);
+                                               */
                 await Task.Delay(40);
             }
 
@@ -164,6 +166,30 @@ namespace gs2d_sample
         private void motorTrackBar4_Scroll(object sender, EventArgs e)
         {
             targetPosition4 = motorTrackBar4.Value / 10.0;
+        }
+
+        private void sinWaveButton_Click(object sender, EventArgs e)
+        {
+            timer1.Enabled = !timer1.Enabled;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            int deg = (int)(150 * System.Math.Sin(System.Math.PI * sinBase / 180.0));
+
+            motorTrackBar1.Value = deg;
+            motorTrackBar2.Value = deg;
+            motorTrackBar3.Value = deg;
+            motorTrackBar4.Value = deg;
+
+            targetPosition1 = motorTrackBar1.Value / 10.0;
+            targetPosition2 = motorTrackBar2.Value / 10.0;
+            targetPosition3 = motorTrackBar3.Value / 10.0;
+            targetPosition4 = motorTrackBar4.Value / 10.0;
+
+            sinBase += 10;
+
+            sinBase %= 360;
         }
     }
 }

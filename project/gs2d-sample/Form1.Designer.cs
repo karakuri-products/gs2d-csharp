@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.motorTrackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.comComboBox = new System.Windows.Forms.ComboBox();
@@ -39,13 +40,14 @@
             this.motorTrackBar4 = new System.Windows.Forms.TrackBar();
             this.openButton = new System.Windows.Forms.Button();
             this.reloadButton = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.sinWaveButton = new System.Windows.Forms.Button();
             this.motorNumericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.motorNumericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.motorNumericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.motorNumericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar3)).BeginInit();
@@ -172,14 +174,15 @@
             this.reloadButton.UseVisualStyleBackColor = true;
             this.reloadButton.Click += new System.EventHandler(this.reloadButton_Click);
             // 
-            // button3
+            // sinWaveButton
             // 
-            this.button3.Location = new System.Drawing.Point(12, 326);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "Sin Wave";
-            this.button3.UseVisualStyleBackColor = true;
+            this.sinWaveButton.Location = new System.Drawing.Point(12, 326);
+            this.sinWaveButton.Name = "sinWaveButton";
+            this.sinWaveButton.Size = new System.Drawing.Size(75, 23);
+            this.sinWaveButton.TabIndex = 11;
+            this.sinWaveButton.Text = "Sin Wave";
+            this.sinWaveButton.UseVisualStyleBackColor = true;
+            this.sinWaveButton.Click += new System.EventHandler(this.sinWaveButton_Click);
             // 
             // motorNumericUpDown1
             // 
@@ -227,6 +230,11 @@
             this.label6.TabIndex = 17;
             this.label6.Text = "temperature";
             // 
+            // timer1
+            // 
+            this.timer1.Interval = 40;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -238,7 +246,7 @@
             this.Controls.Add(this.motorNumericUpDown3);
             this.Controls.Add(this.motorNumericUpDown2);
             this.Controls.Add(this.motorNumericUpDown1);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.sinWaveButton);
             this.Controls.Add(this.reloadButton);
             this.Controls.Add(this.openButton);
             this.Controls.Add(this.label4);
@@ -281,13 +289,14 @@
         private System.Windows.Forms.TrackBar motorTrackBar4;
         private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.Button reloadButton;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button sinWaveButton;
         private System.Windows.Forms.NumericUpDown motorNumericUpDown1;
         private System.Windows.Forms.NumericUpDown motorNumericUpDown2;
         private System.Windows.Forms.NumericUpDown motorNumericUpDown3;
         private System.Windows.Forms.NumericUpDown motorNumericUpDown4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
