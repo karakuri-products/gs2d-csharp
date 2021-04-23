@@ -299,7 +299,7 @@ namespace gs2d
         /// <param name="responseProcess"></param>
         /// <param name="callback"></param>
         /// <param name="length"></param>
-        private T getFunction<T>(byte id, byte instruction, byte[] parameters = null, Func<byte[], T> responseProcess = null, Action<T> callback = null, byte length = 0)
+        private T getFunction<T>(byte id, byte instruction, byte[] parameters = null, Func<byte[], T> responseProcess = null, Action<byte, T> callback = null, byte length = 0)
         {
             bool is_received = false;
             T data = default(T);
@@ -352,7 +352,7 @@ namespace gs2d
                 } while (false);
 
                 // 終了処理
-                if (callback != null) callback(data);
+                if (callback != null) callback(id, data);
 
                 is_received = true;
 
@@ -390,14 +390,14 @@ namespace gs2d
             return data;
         }
 
-        private void defaultWriteCallback(byte[] data)
+        private void defaultWriteCallback(byte id, byte[] data)
         {
             if (data != null) throw new InvalidResponseDataException("データが多すぎます");
         }
 
         // ------------------------------------------------------------------------------------------
         // General
-        public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte[]> callback = null)
+        public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -409,7 +409,7 @@ namespace gs2d
             return getFunction(id, Instructions.Read, param, null, callback);
         }
 
-        public override async Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte[]> callback = null)
+        public override async Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)
         {
             return await Task.Run(() => ReadMemory(id, address, length, callback));
         }
@@ -425,7 +425,7 @@ namespace gs2d
         }
 
         // Torque 
-        public override byte ReadTorqueEnable(byte id, Action<byte> callback = null)
+        public override byte ReadTorqueEnable(byte id, Action<byte, byte> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -442,7 +442,7 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<byte> ReadTorqueEnableAsync(byte id, Action<byte> callback = null)
+        public override async Task<byte> ReadTorqueEnableAsync(byte id, Action<byte, byte> callback = null)
         {
             return await Task.Run(() => ReadTorqueEnable(id, callback));
         }
@@ -457,7 +457,7 @@ namespace gs2d
         }
 
         // Target Position
-        public override double ReadTargetPosition(byte id, Action<double> callback = null)
+        public override double ReadTargetPosition(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -479,7 +479,7 @@ namespace gs2d
             return getFunction(id, Instructions.Read, param, responseProcess, callback);
         }
 
-        public override async Task<double> ReadTargetPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadTargetPosition(id, callback));
         }
@@ -499,7 +499,7 @@ namespace gs2d
         }
 
         // Ping
-        public override Dictionary<string, ushort> Ping(byte id, Action<Dictionary<string, ushort>> callback = null)
+        public override Dictionary<string, ushort> Ping(byte id, Action<byte, Dictionary<string, ushort>> callback = null)
         {
 
             // IDチェック
@@ -525,13 +525,13 @@ namespace gs2d
             // 送信
             return getFunction(id, Instructions.Ping, null, responseProcess, callback, 0);
         }
-        public override async Task<Dictionary<string, ushort>> PingAsync(byte id, Action<Dictionary<string, ushort>> callback = null)
+        public override async Task<Dictionary<string, ushort>> PingAsync(byte id, Action<byte, Dictionary<string, ushort>> callback = null)
         {
             return await Task.Run(() => Ping(id, callback));
         }
 
         // Temperature
-        public override ushort ReadTemperature(byte id, Action<ushort> callback = null)
+        public override ushort ReadTemperature(byte id, Action<byte, ushort> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -552,13 +552,13 @@ namespace gs2d
             // 送信
             return getFunction<ushort>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<ushort> ReadTemperatureAsync(byte id, Action<ushort> callback = null)
+        public override async Task<ushort> ReadTemperatureAsync(byte id, Action<byte, ushort> callback = null)
         {
             return await Task.Run(() => ReadTemperature(id, callback));
         }
 
         // Current
-        public override int ReadCurrent(byte id, Action<int> callback = null)
+        public override int ReadCurrent(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -580,13 +580,13 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadCurrentAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadCurrentAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadCurrent(id, callback));
         }
 
         // Voltage
-        public override double ReadVoltage(byte id, Action<double> callback = null)
+        public override double ReadVoltage(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -608,13 +608,13 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadVoltageAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadVoltageAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadVoltage(id, callback));
         }
 
         // Current Position
-        public override double ReadCurrentPosition(byte id, Action<double> callback = null)
+        public override double ReadCurrentPosition(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -636,13 +636,13 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadCurrentPosition(id, callback));
         }
 
         // Offset
-        public override double ReadOffset(byte id, Action<double> callback = null)
+        public override double ReadOffset(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -664,7 +664,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadOffsetAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadOffsetAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadOffset(id, callback));
         }
@@ -685,11 +685,11 @@ namespace gs2d
         }
 
         // Deadband
-        public override double ReadDeadband(byte id, Action<double> callback = null)
+        public override double ReadDeadband(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadDeadbandに対応していません。");
         }
-        public override Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null)
+        public override Task<double> ReadDeadbandAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadDeadbandAsyncに対応していません。");
         }
@@ -699,7 +699,7 @@ namespace gs2d
         }
 
         // Target Time
-        public override double ReadTargetTime(byte id, Action<double> callback = null)
+        public override double ReadTargetTime(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -721,7 +721,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetTimeAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadTargetTime(id, callback));
         }
@@ -741,7 +741,7 @@ namespace gs2d
         }
 
         // Accel Time
-        public override double ReadAccelTime(byte id, Action<double> callback = null)
+        public override double ReadAccelTime(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -763,7 +763,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadAccelTimeAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadAccelTime(id, callback));
         }
@@ -783,7 +783,7 @@ namespace gs2d
         }
 
         // P Gain
-        public override int ReadPGain(byte id, Action<int> callback = null)
+        public override int ReadPGain(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -803,7 +803,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadPGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadPGainAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadPGain(id, callback));
         }
@@ -822,7 +822,7 @@ namespace gs2d
         }
 
         // I Gain
-        public override int ReadIGain(byte id, Action<int> callback = null)
+        public override int ReadIGain(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -842,7 +842,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadIGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIGainAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadIGain(id, callback));
         }
@@ -861,7 +861,7 @@ namespace gs2d
         }
 
         // D Gain
-        public override int ReadDGain(byte id, Action<int> callback = null)
+        public override int ReadDGain(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -881,7 +881,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadDGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDGainAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadDGain(id, callback));
         }
@@ -900,11 +900,11 @@ namespace gs2d
         }
 
         // Max Torque
-        public override int ReadMaxTorque(byte id, Action<int> callback = null)
+        public override int ReadMaxTorque(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadMaxTorqueに対応していません。");
         }
-        public override Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null)
+        public override Task<int> ReadMaxTorqueAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("RobotisP20ではReadMaxTorqueAsyncに対応していません。");
         }
@@ -914,7 +914,7 @@ namespace gs2d
         }
 
         // Speed
-        public override double ReadSpeed(byte id, Action<double> callback = null)
+        public override double ReadSpeed(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -935,7 +935,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadSpeedAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadSpeedAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadSpeed(id, callback));
         }
@@ -956,7 +956,7 @@ namespace gs2d
         }
 
         // ID
-        public override int ReadID(byte id, Action<int> callback = null)
+        public override int ReadID(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -976,7 +976,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadIDAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIDAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadID(id, callback));
         }
@@ -1011,7 +1011,7 @@ namespace gs2d
         }
 
         // Baudrate
-        public override int ReadBaudrate(byte id, Action<int> callback = null)
+        public override int ReadBaudrate(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1032,7 +1032,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadBaudrateAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadBaudrateAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadBaudrate(id, callback));
         }
@@ -1060,7 +1060,7 @@ namespace gs2d
         }
 
         // CW Limit Position
-        public override double ReadLimitCWPosition(byte id, Action<double> callback = null)
+        public override double ReadLimitCWPosition(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1081,7 +1081,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadLimitCWPosition(id, callback));
         }
@@ -1103,7 +1103,7 @@ namespace gs2d
         }
 
         // CCW Limit Position
-        public override double ReadLimitCCWPosition(byte id, Action<double> callback = null)
+        public override double ReadLimitCCWPosition(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1124,7 +1124,7 @@ namespace gs2d
             // 送信
             return getFunction<double>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadLimitCCWPosition(id, callback));
         }
@@ -1146,7 +1146,7 @@ namespace gs2d
         }
 
         // Temperature Limit
-        public override int ReadLimitTemperature(byte id, Action<int> callback = null)
+        public override int ReadLimitTemperature(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1167,7 +1167,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadLimitTemperatureAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadLimitTemperatureAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadLimitTemperature(id, callback));
         }
@@ -1188,7 +1188,7 @@ namespace gs2d
         }
 
         // Current Limit
-        public override int ReadLimitCurrent(byte id, Action<int> callback = null)
+        public override int ReadLimitCurrent(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1208,7 +1208,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadLimitCurrentAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadLimitCurrentAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadLimitCurrent(id, callback));
         }
@@ -1231,7 +1231,7 @@ namespace gs2d
         }
 
         // Drive Mode
-        public override int ReadDriveMode(byte id, Action<int> callback = null)
+        public override int ReadDriveMode(byte id, Action<byte, int> callback = null)
         {
             // IDチェック
             checkId(id);
@@ -1252,7 +1252,7 @@ namespace gs2d
             // 送信
             return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
         }
-        public override async Task<int> ReadDriveModeAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDriveModeAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadDriveMode(id, callback));
         }

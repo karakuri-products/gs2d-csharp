@@ -59,88 +59,88 @@ namespace gs2d
 
         // ------------------------------------------------------------------------------------------
         // General
-        abstract public byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte[]> callback = null);
-        abstract public Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte[]> callback = null);
+        abstract public byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null);
+        abstract public Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null);
         abstract public void WriteMemory(byte id, ushort address, byte[] data);
 
         // Ping
-        abstract public Dictionary<string, ushort> Ping(byte id, Action<Dictionary<string, ushort>> callback = null);
-        abstract public Task<Dictionary<string, ushort>> PingAsync(byte id, Action<Dictionary<string, ushort>> callback = null);
+        abstract public Dictionary<string, ushort> Ping(byte id, Action<byte, Dictionary<string, ushort>> callback = null);
+        abstract public Task<Dictionary<string, ushort>> PingAsync(byte id, Action<byte, Dictionary<string, ushort>> callback = null);
 
         // Torque 
-        abstract public byte ReadTorqueEnable(byte id, Action<byte> callback = null);
-        abstract public Task<byte> ReadTorqueEnableAsync(byte id, Action<byte> callback = null);
+        abstract public byte ReadTorqueEnable(byte id, Action<byte, byte> callback = null);
+        abstract public Task<byte> ReadTorqueEnableAsync(byte id, Action<byte, byte> callback = null);
         abstract public void WriteTorqueEnable(byte id, byte torque);
 
         // Temperature
-        abstract public ushort ReadTemperature(byte id, Action<ushort> callback = null);
-        abstract public Task<ushort> ReadTemperatureAsync(byte id, Action<ushort> callback = null);
+        abstract public ushort ReadTemperature(byte id, Action<byte, ushort> callback = null);
+        abstract public Task<ushort> ReadTemperatureAsync(byte id, Action<byte, ushort> callback = null);
 
         // Current
-        abstract public int ReadCurrent(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadCurrentAsync(byte id, Action<int> callback = null);
+        abstract public int ReadCurrent(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadCurrentAsync(byte id, Action<byte, int> callback = null);
 
         // Voltage
-        abstract public double ReadVoltage(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadVoltageAsync(byte id, Action<double> callback = null);
+        abstract public double ReadVoltage(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadVoltageAsync(byte id, Action<byte, double> callback = null);
 
         // Target Position
-        abstract public double ReadTargetPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadTargetPositionAsync(byte id, Action<double> callback = null);
+        abstract public double ReadTargetPosition(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadTargetPositionAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteTargetPosition(byte id, double position);
 
         // Current Position
-        abstract public double ReadCurrentPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null);
+        abstract public double ReadCurrentPosition(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadCurrentPositionAsync(byte id, Action<byte, double> callback = null);
 
         // Offset
-        abstract public double ReadOffset(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadOffsetAsync(byte id, Action<double> callback = null);
+        abstract public double ReadOffset(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadOffsetAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteOffset(byte id, double offset);
 
         // Deadband
-        abstract public double ReadDeadband(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null);
+        abstract public double ReadDeadband(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadDeadbandAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteDeadband(byte id, double deadband);
 
         // Target Time
-        abstract public double ReadTargetTime(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null);
+        abstract public double ReadTargetTime(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadTargetTimeAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteTargetTime(byte id, double targetTime);
 
         // Accel Time
-        abstract public double ReadAccelTime(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null);
+        abstract public double ReadAccelTime(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadAccelTimeAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteAccelTime(byte id, double accelTime);
 
         // P Gain
-        abstract public int ReadPGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadPGainAsync(byte id, Action<int> callback = null);
+        abstract public int ReadPGain(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadPGainAsync(byte id, Action<byte, int> callback = null);
         abstract public void WritePGain(byte id, int gain);
 
         // I Gain
-        abstract public int ReadIGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadIGainAsync(byte id, Action<int> callback = null);
+        abstract public int ReadIGain(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadIGainAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteIGain(byte id, int gain);
 
         // D Gain
-        abstract public int ReadDGain(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadDGainAsync(byte id, Action<int> callback = null);
+        abstract public int ReadDGain(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadDGainAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteDGain(byte id, int gain);
 
         // Max Torque
-        abstract public int ReadMaxTorque(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null);
+        abstract public int ReadMaxTorque(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadMaxTorqueAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteMaxTorque(byte id, int maxTorque);
 
         // Speed
-        abstract public double ReadSpeed(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadSpeedAsync(byte id, Action<double> callback = null);
+        abstract public double ReadSpeed(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadSpeedAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteSpeed(byte id, double speed);
 
         // ID
-        abstract public int ReadID(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadIDAsync(byte id, Action<int> callback = null);
+        abstract public int ReadID(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadIDAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteID(byte id, int servoid);
 
         // ROM
@@ -149,33 +149,33 @@ namespace gs2d
         abstract public void ResetMemory(byte id);
 
         // Baudrate
-        abstract public int ReadBaudrate(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadBaudrateAsync(byte id, Action<int> callback = null);
+        abstract public int ReadBaudrate(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadBaudrateAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteBaudrate(byte id, int baudrate);
 
         // CW Limit Position
-        abstract public double ReadLimitCWPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null);
+        abstract public double ReadLimitCWPosition(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadLimitCWPositionAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteLimitCWPosition(byte id, double cwLimit);
 
         // CCW Limit Position
-        abstract public double ReadLimitCCWPosition(byte id, Action<double> callback = null);
-        abstract public Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null);
+        abstract public double ReadLimitCCWPosition(byte id, Action<byte, double> callback = null);
+        abstract public Task<double> ReadLimitCCWPositionAsync(byte id, Action<byte, double> callback = null);
         abstract public void WriteLimitCCWPosition(byte id, double ccwLimit);
 
         // Temperature Limit
-        abstract public int ReadLimitTemperature(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadLimitTemperatureAsync(byte id, Action<int> callback = null);
+        abstract public int ReadLimitTemperature(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadLimitTemperatureAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteLimitTemperature(byte id, int temperatureLimit);
 
         // Current Limit
-        abstract public int ReadLimitCurrent(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadLimitCurrentAsync(byte id, Action<int> callback = null);
+        abstract public int ReadLimitCurrent(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadLimitCurrentAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteLimitCurrent(byte id, int currentLimit);
 
         // Drive Mode
-        abstract public int ReadDriveMode(byte id, Action<int> callback = null);
-        abstract public Task<int> ReadDriveModeAsync(byte id, Action<int> callback = null);
+        abstract public int ReadDriveMode(byte id, Action<byte, int> callback = null);
+        abstract public Task<int> ReadDriveModeAsync(byte id, Action<byte, int> callback = null);
         abstract public void WriteDriveMode(byte id, int driveMode);
 
         // Burst Function

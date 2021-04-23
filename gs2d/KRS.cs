@@ -63,10 +63,12 @@ namespace gs2d
         /// <param name="id"></param>
         private void checkId(byte id) { if (id < 0 || id > 31) throw new BadInputParametersException("IDがレンジ外です"); }
 
-        private T getFunction<T>(byte[] command, Func<byte[], T> responseProcess = null, Action<T> callback = null)
+        private T getFunction<T>(byte[] command, Func<byte[], T> responseProcess = null, Action<byte, T> callback = null)
         {
             bool isReceived = false;
             T data = default(T);
+
+            byte id = 0;
 
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
@@ -106,10 +108,12 @@ namespace gs2d
                 catch (Exception ex) { }
 
                 // 終了処理
-                if (callback != null) callback(data);
+                if (callback != null) callback(id, data);
 
                 isReceived = true;
             };
+
+            id = (byte)(command[0] & 0b11111);
 
             // コマンド送信
             commandHandler.AddCommand(command, templateReceiveCallback);
@@ -134,14 +138,14 @@ namespace gs2d
         /// Write関数用コールバック
         /// </summary>
         /// <param name="data"></param>
-        private void defaultWriteCallback(byte[] data)
+        private void defaultWriteCallback(byte id, byte[] data)
         {
 
         }
 
         // ------------------------------------------------------------------------------------------
         // General
-        public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte[]> callback = null)
+        public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -157,7 +161,7 @@ namespace gs2d
             return getFunction(command, responseProcess, callback);
         }
 
-        public override async Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte[]> callback = null)
+        public override async Task<byte[]> ReadMemoryAsync(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)
         {
             return await Task.Run(() => ReadMemory(id, address, length, callback));
         }
@@ -181,7 +185,7 @@ namespace gs2d
         }
 
         // Ping
-        public override Dictionary<string, ushort> Ping(byte id, Action<Dictionary<string, ushort>> callback = null)
+        public override Dictionary<string, ushort> Ping(byte id, Action<byte, Dictionary<string, ushort>> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -203,17 +207,17 @@ namespace gs2d
             };
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<Dictionary<string, ushort>> PingAsync(byte id, Action<Dictionary<string, ushort>> callback = null)
+        public override async Task<Dictionary<string, ushort>> PingAsync(byte id, Action<byte, Dictionary<string, ushort>> callback = null)
         {
             return await Task.Run(() => Ping(id, callback));
         }
 
         // Torque 
-        public override byte ReadTorqueEnable(byte id, Action<byte> callback = null)
+        public override byte ReadTorqueEnable(byte id, Action<byte, byte> callback = null)
         {
             throw new NotSupportedException("KRSではReadTorqueEnableに対応していません。");
         }
-        public override async Task<byte> ReadTorqueEnableAsync(byte id, Action<byte> callback = null)
+        public override async Task<byte> ReadTorqueEnableAsync(byte id, Action<byte, byte> callback = null)
         {
             throw new NotSupportedException("KRSではReadTorqueEnableAsyncに対応していません。");
         }
@@ -238,7 +242,7 @@ namespace gs2d
         }
 
         // Temperature
-        public override ushort ReadTemperature(byte id, Action<ushort> callback = null)
+        public override ushort ReadTemperature(byte id, Action<byte, ushort> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x04 };
 
@@ -253,13 +257,13 @@ namespace gs2d
             return getFunction(command, responseProcess, callback);
         }
 
-        public override async Task<ushort> ReadTemperatureAsync(byte id, Action<ushort> callback = null)
+        public override async Task<ushort> ReadTemperatureAsync(byte id, Action<byte, ushort> callback = null)
         {
             return await Task.Run(() => ReadTemperature(id, callback));
         }
 
         // Current
-        public override int ReadCurrent(byte id, Action<int> callback = null)
+        public override int ReadCurrent(byte id, Action<byte, int> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x03 };
 
@@ -277,27 +281,27 @@ namespace gs2d
 
             return getFunction<int>(command, responseProcess, callback);
         }
-        public override async Task<int> ReadCurrentAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadCurrentAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadCurrent(id, callback));
         }
 
         // Voltage
-        public override double ReadVoltage(byte id, Action<double> callback = null)
+        public override double ReadVoltage(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadVoltageに対応していません。");
         }
-        public override async Task<double> ReadVoltageAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadVoltageAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadVoltageAsyncに対応していません。");
         }
 
         // Target Position
-        public override double ReadTargetPosition(byte id, Action<double> callback = null)
+        public override double ReadTargetPosition(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadTargetPositionに対応していません。");
         }
-        public override async Task<double> ReadTargetPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetPositionAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadTargetPositionAsyncに対応していません。");
         }
@@ -319,7 +323,7 @@ namespace gs2d
         }
 
         // Current Position
-        public override double ReadCurrentPosition(byte id, Action<double> callback = null)
+        public override double ReadCurrentPosition(byte id, Action<byte, double> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x05 };
 
@@ -337,17 +341,17 @@ namespace gs2d
 
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadCurrentPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadCurrentPosition(id, callback));
         }
 
         // Offset
-        public override double ReadOffset(byte id, Action<double> callback = null)
+        public override double ReadOffset(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadOffsetに対応していません。");
         }
-        public override async Task<double> ReadOffsetAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadOffsetAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadOffsetAsyncに対応していません。");
         }
@@ -357,7 +361,7 @@ namespace gs2d
         }
 
         // Deadband
-        public override double ReadDeadband(byte id, Action<double> callback = null)
+        public override double ReadDeadband(byte id, Action<byte, double> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -375,7 +379,7 @@ namespace gs2d
             };
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<double> ReadDeadbandAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadDeadbandAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadDeadband(id, callback));
         }
@@ -396,11 +400,11 @@ namespace gs2d
         }
 
         // Target Time
-        public override double ReadTargetTime(byte id, Action<double> callback = null)
+        public override double ReadTargetTime(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadTargetTimeに対応していません。");
         }
-        public override async Task<double> ReadTargetTimeAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadTargetTimeAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadTargetTimeAsyncに対応していません。");
         }
@@ -410,11 +414,11 @@ namespace gs2d
         }
 
         // Accel Time
-        public override double ReadAccelTime(byte id, Action<double> callback = null)
+        public override double ReadAccelTime(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadAccelTimeに対応していません。");
         }
-        public override async Task<double> ReadAccelTimeAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadAccelTimeAsync(byte id, Action<byte, double> callback = null)
         {
             throw new NotSupportedException("KRSではReadAccelTimeAsyncに対応していません。");
         }
@@ -424,7 +428,7 @@ namespace gs2d
         }
 
         // P Gain
-        public override int ReadPGain(byte id, Action<int> callback = null)
+        public override int ReadPGain(byte id, Action<byte, int> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x01 };
 
@@ -441,7 +445,7 @@ namespace gs2d
 
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<int> ReadPGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadPGainAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadPGain(id, callback));
         }
@@ -460,11 +464,11 @@ namespace gs2d
         }
 
         // I Gain
-        public override int ReadIGain(byte id, Action<int> callback = null)
+        public override int ReadIGain(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadIGainに対応していません。");
         }
-        public override async Task<int> ReadIGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIGainAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadIGainAsyncに対応していません。");
         }
@@ -474,11 +478,11 @@ namespace gs2d
         }
 
         // D Gain
-        public override int ReadDGain(byte id, Action<int> callback = null)
+        public override int ReadDGain(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadDGainに対応していません。");
         }
-        public override async Task<int> ReadDGainAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDGainAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadDGainAsyncに対応していません。");
         }
@@ -488,11 +492,11 @@ namespace gs2d
         }
 
         // Max Torque
-        public override int ReadMaxTorque(byte id, Action<int> callback = null)
+        public override int ReadMaxTorque(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadMaxTorqueに対応していません。");
         }
-        public override async Task<int> ReadMaxTorqueAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadMaxTorqueAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadMaxTorqueAsyncに対応していません。");
         }
@@ -502,7 +506,7 @@ namespace gs2d
         }
 
         // Speed
-        public override double ReadSpeed(byte id, Action<double> callback = null)
+        public override double ReadSpeed(byte id, Action<byte, double> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x02 };
 
@@ -519,7 +523,7 @@ namespace gs2d
 
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<double> ReadSpeedAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadSpeedAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadSpeed(id, callback));
         }
@@ -538,7 +542,7 @@ namespace gs2d
         }
 
         // ID
-        public override int ReadID(byte id, Action<int> callback = null)
+        public override int ReadID(byte id, Action<byte, int> callback = null)
         {
             byte[] command = new byte[4] { 0xFF, 0, 0, 0 };
             Func<byte[], int> responseProcess = (response) =>
@@ -552,7 +556,7 @@ namespace gs2d
 
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<int> ReadIDAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadIDAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadID(id, callback));
         }
@@ -583,7 +587,7 @@ namespace gs2d
         }
 
         // Baudrate
-        public override int ReadBaudrate(byte id, Action<int> callback = null)
+        public override int ReadBaudrate(byte id, Action<byte, int> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -606,7 +610,7 @@ namespace gs2d
             };
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<int> ReadBaudrateAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadBaudrateAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadBaudrate(id, callback));
         }
@@ -630,7 +634,7 @@ namespace gs2d
         }
 
         // CW Limit Position
-        public override double ReadLimitCWPosition(byte id, Action<double> callback = null)
+        public override double ReadLimitCWPosition(byte id, Action<byte, double> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -649,7 +653,7 @@ namespace gs2d
             };
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCWPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadLimitCWPosition(id, callback));
         }
@@ -675,7 +679,7 @@ namespace gs2d
         }
 
         // CCW Limit Position
-        public override double ReadLimitCCWPosition(byte id, Action<double> callback = null)
+        public override double ReadLimitCCWPosition(byte id, Action<byte, double> callback = null)
         {
             byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
 
@@ -694,7 +698,7 @@ namespace gs2d
             };
             return getFunction(command, responseProcess, callback);
         }
-        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<double> callback = null)
+        public override async Task<double> ReadLimitCCWPositionAsync(byte id, Action<byte, double> callback = null)
         {
             return await Task.Run(() => ReadLimitCCWPosition(id, callback));
         }
@@ -720,11 +724,11 @@ namespace gs2d
         }
 
         // Temperature Limit
-        public override int ReadLimitTemperature(byte id, Action<int> callback = null)
+        public override int ReadLimitTemperature(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadLimitTemperatureに対応していません。");
         }
-        public override async Task<int> ReadLimitTemperatureAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadLimitTemperatureAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadLimitTemperatureAsyncに対応していません。");
         }
@@ -745,11 +749,11 @@ namespace gs2d
         }
 
         // Current Limit
-        public override int ReadLimitCurrent(byte id, Action<int> callback = null)
+        public override int ReadLimitCurrent(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadLimitCurrentに対応していません。");
         }
-        public override async Task<int> ReadLimitCurrentAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadLimitCurrentAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadLimitCurrentAsyncに対応していません。");
         }
@@ -770,11 +774,11 @@ namespace gs2d
         }
 
         // Drive Mode
-        public override int ReadDriveMode(byte id, Action<int> callback = null)
+        public override int ReadDriveMode(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadDriveModeに対応していません。");
         }
-        public override async Task<int> ReadDriveModeAsync(byte id, Action<int> callback = null)
+        public override async Task<int> ReadDriveModeAsync(byte id, Action<byte, int> callback = null)
         {
             throw new NotSupportedException("KRSではReadDriveModeAsyncに対応していません。");
         }

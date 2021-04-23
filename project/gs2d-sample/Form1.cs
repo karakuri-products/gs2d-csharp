@@ -22,8 +22,6 @@ namespace gs2d_sample
         double targetPosition3 = 0.0;
         double targetPosition4 = 0.0;
 
-        uint sinBase = 0;
-
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         internal CancellationToken token;
 
@@ -34,7 +32,6 @@ namespace gs2d_sample
 
         void TimeoutEvent()
         {
-            // タイムアウト時は通信用タスクを終了させる
             this.Invoke((MethodInvoker)(() =>
             {
                 tokenSource.Cancel();
@@ -49,7 +46,6 @@ namespace gs2d_sample
 
             comComboBox.Items.Clear();
 
-            // ポート発見/未発見で処理変更
             if(ports.Length == 0)
             {
                 comComboBox.Items.Add("-");
@@ -68,6 +64,10 @@ namespace gs2d_sample
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // 15 ~-15 のGUIソフトを用意
+            // Sinウェーブ
+            // 補完について残す
+
             ReloadComPort();
         }
 
@@ -103,42 +103,41 @@ namespace gs2d_sample
             }
         }
 
-        void TemperatureCallback1(ushort temperature)
+        void TemperatureCallback(byte id, ushort temperature)
         {
-            this.Invoke((MethodInvoker)(() => motorNumericUpDown1.Value = temperature));
-        }
-
-        void TemperatureCallback2(ushort temperature)
-        {
-            this.Invoke((MethodInvoker)(() => motorNumericUpDown2.Value = temperature));
-        }
-
-        void TemperatureCallback3(ushort temperature)
-        {
-            this.Invoke((MethodInvoker)(() => motorNumericUpDown3.Value = temperature));
-        }
-
-        void TemperatureCallback4(ushort temperature)
-        {
-            this.Invoke((MethodInvoker)(() => motorNumericUpDown4.Value = temperature));
+            switch (id)
+            {
+                case 1:
+                    this.Invoke((MethodInvoker)(() => motorNumericUpDown1.Value = temperature));
+                    break;
+                case 2:
+                    this.Invoke((MethodInvoker)(() => motorNumericUpDown2.Value = temperature));
+                    break;
+                case 3:
+                    this.Invoke((MethodInvoker)(() => motorNumericUpDown3.Value = temperature));
+                    break;
+                case 4:
+                    this.Invoke((MethodInvoker)(() => motorNumericUpDown4.Value = temperature));
+                    break;
+            }
         }
 
         private async Task MainTask(CancellationToken cancelToken)
         {
-            while (!cancelToken.IsCancellationRequested)
+            while(!cancelToken.IsCancellationRequested)
             {
-                servo.ReadTemperature(1, TemperatureCallback1);
+                servo.ReadTemperature(1, TemperatureCallback);
                 servo.WriteTargetPosition(1, targetPosition1);
 
-                servo.ReadTemperature(2, TemperatureCallback2);
+                servo.ReadTemperature(2, TemperatureCallback);
                 servo.WriteTargetPosition(2, targetPosition2);
 
-                servo.ReadTemperature(3, TemperatureCallback3);
+                servo.ReadTemperature(3, TemperatureCallback);
                 servo.WriteTargetPosition(3, targetPosition3);
 
-                servo.ReadTemperature(4, TemperatureCallback4);
+                servo.ReadTemperature(4, TemperatureCallback);
                 servo.WriteTargetPosition(4, targetPosition4);
-
+                
                 await Task.Delay(40);
             }
 
@@ -164,30 +163,6 @@ namespace gs2d_sample
         private void motorTrackBar4_Scroll(object sender, EventArgs e)
         {
             targetPosition4 = motorTrackBar4.Value / 10.0;
-        }
-
-        private void sinWaveButton_Click(object sender, EventArgs e)
-        {
-            timer1.Enabled = !timer1.Enabled;
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            int deg = (int)(150 * System.Math.Sin(System.Math.PI * sinBase / 180.0));
-
-            motorTrackBar1.Value = deg;
-            motorTrackBar2.Value = deg;
-            motorTrackBar3.Value = deg;
-            motorTrackBar4.Value = deg;
-
-            targetPosition1 = motorTrackBar1.Value / 10.0;
-            targetPosition2 = motorTrackBar2.Value / 10.0;
-            targetPosition3 = motorTrackBar3.Value / 10.0;
-            targetPosition4 = motorTrackBar4.Value / 10.0;
-
-            sinBase += 10;
-
-            sinBase %= 360;
         }
     }
 }
