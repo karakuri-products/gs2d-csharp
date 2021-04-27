@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tLqWVsCOIwkYNQkvtNtnHc1hXIa3tZXtWaw29xKHKbPrbvhu/aHWQpCqnP6qWuHetqCXXWZlHFIx4I21DB41ZQ==",
+  "dgSpecHash": "ck2EL2t3bVpl29kmzPbihzm4r8liBPlbxQs9IeJtRz+xW/ksTh09YMYx53cNwtuDgQT4+P9Jso8W5/csCHbs7w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\radia\\source\\repos\\gs2d\\gs2d\\gs2d\\gs2d.csproj",
+  "projectFilePath": "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\gs2d.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\radia\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\radia\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",

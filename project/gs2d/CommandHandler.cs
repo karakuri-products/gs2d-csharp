@@ -233,10 +233,12 @@ namespace gs2d
 
                         // 全サーボ受信完了チェック
                         currentCommand.servoCount--;
+
+                        // コールバックを呼び出し
+                        currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
+
                         if (currentCommand.servoCount == 0)
                         {
-                            // コールバックを呼び出し
-                            currentCommand.callback(receiveBuffer.Take((int)receivePos).ToArray());
 
                             // コマンドキューから削除
                             commandQueue.RemoveAt(0);
