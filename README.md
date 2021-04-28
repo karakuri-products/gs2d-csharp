@@ -1,15 +1,12 @@
 ## 使用方法
-ソースをプロジェクトに含める
-
-TODO:
-(gs2d.dllをプロジェクトに含め、参照できるようにする nugetなど）
+gs2d.dllを参照に追加
 
 ## ビルド環境
 クラス ライブラリ .NET Standard 2.0
 
 ## 利用例
 
-### ID1のサーボモーターを左右に動かす
+### ID1のサーボモーターを左右に90度ずつ動かす
 ```
 using gs2d;
 ```
@@ -35,9 +32,9 @@ int temperature = servo.ReadTemperature(1);
 ```
 using gs2d;
 
-private void temperatureCallback(ushort temperature)
+private void temperatureCallback(byte id, ushort temperature)
 {
-    Console.WriteLine(temperature.ToString());
+    Console.WriteLine("Servo ID : " + id.ToString() + ", Temperature : " + temperature.ToString());
 }
 ```
 ```
