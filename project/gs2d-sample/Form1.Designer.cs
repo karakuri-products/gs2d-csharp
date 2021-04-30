@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.motorTrackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.comComboBox = new System.Windows.Forms.ComboBox();
@@ -46,6 +47,7 @@
             this.motorNumericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar3)).BeginInit();
@@ -180,6 +182,7 @@
             this.button3.TabIndex = 11;
             this.button3.Text = "Sin Wave";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // motorNumericUpDown1
             // 
@@ -226,6 +229,11 @@
             this.label6.Size = new System.Drawing.Size(66, 12);
             this.label6.TabIndex = 17;
             this.label6.Text = "temperature";
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 10;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -288,6 +296,7 @@
         private System.Windows.Forms.NumericUpDown motorNumericUpDown4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -190,6 +190,12 @@ namespace gs2d
             return command;
         }
 
+        private void burstWriteFunction(byte[] parameters)
+        {
+            byte[] command = generateCommand(0xFE, Instructions.SyncWrite, parameters, 0);
+            commandHandler.AddCommand(command, null, 0);
+        }
+
         /// <summary>
         /// 同時送受信
         /// </summary>
@@ -1286,8 +1292,8 @@ namespace gs2d
         public override void BurstWriteMemory(Dictionary<int, byte[]> idDataList, ushort address, ushort length)
         {
             byte[] param = generateParametersSyncWrite((byte)address, length, idDataList);
-            getFunctionBurstRead<byte[]>(0xFE, Instructions.SyncWrite, 0, param, null, null);
-            ;
+            burstWriteFunction(param);
+            //            getFunctionBurstRead<byte[]>(0xFE, Instructions.SyncWrite, 0, param, null, null);
         }
 
         // Burst Functions ( Position )
@@ -1326,7 +1332,8 @@ namespace gs2d
             }
 
             byte[] param = generateParametersSyncWrite(Address.GoalPosition, 4, idPositionListInt);
-            getFunctionBurstRead<byte[]>(0xFE, Instructions.SyncWrite, 0, param, null, null);
+            burstWriteFunction(param);
+//            getFunctionBurstRead<byte[]>(0xFE, Instructions.SyncWrite, 0, param, null, null);
         }
     }
 }

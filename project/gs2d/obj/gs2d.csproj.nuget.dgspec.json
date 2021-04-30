@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\gs2d.csproj": {}
+    "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj": {}
   },
   "projects": {
-    "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\gs2d.csproj": {
+    "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\gs2d.csproj",
+        "projectUniqueName": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj",
         "projectName": "gs2d",
-        "projectPath": "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\gs2d.csproj",
+        "projectPath": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj",
         "packagesPath": "C:\\Users\\radia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\radia\\Documents\\gs2d-csharp-github\\project\\gs2d\\obj\\",
+        "outputPath": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\radia\\AppData\\Roaming\\NuGet\\NuGet.Config",

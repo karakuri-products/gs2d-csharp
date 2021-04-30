@@ -48,7 +48,7 @@ namespace gs2d
             serialPort.StopBits = StopBits.One;
             serialPort.Handshake = Handshake.None;
             serialPort.PortName = portName;
-            serialPort.ReadTimeout = 100;
+            serialPort.ReadTimeout = 10;
             try
             {
                 serialPort.Open();

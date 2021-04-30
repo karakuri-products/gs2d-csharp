@@ -82,7 +82,7 @@ namespace gs2d_sample
             {
                 // 指定のCOMポートを開く
                 string port = (string)comComboBox.SelectedItem;
-                servo = new RobotisP20(port, 115200);
+                servo = new RobotisP20(port, 57600);
 
                 servo.TimeoutCallbackEvent += TimeoutEvent;
 
@@ -127,18 +127,21 @@ namespace gs2d_sample
             while(!cancelToken.IsCancellationRequested)
             {
                 servo.ReadTemperature(1, TemperatureCallback);
-                servo.WriteTargetPosition(1, targetPosition1);
-
                 servo.ReadTemperature(2, TemperatureCallback);
-                servo.WriteTargetPosition(2, targetPosition2);
-
                 servo.ReadTemperature(3, TemperatureCallback);
-                servo.WriteTargetPosition(3, targetPosition3);
-
                 servo.ReadTemperature(4, TemperatureCallback);
-                servo.WriteTargetPosition(4, targetPosition4);
                 
-                await Task.Delay(40);
+
+                Dictionary<int, double> target = new Dictionary<int, double>();
+
+                target.Add(1, targetPosition1);
+                target.Add(2, targetPosition2);
+                target.Add(3, targetPosition3);
+                target.Add(4, targetPosition4);
+
+                servo.BurstWriteTargetPositions(target);
+
+                await Task.Delay(20);
             }
 
             servo.Close();
@@ -163,6 +166,28 @@ namespace gs2d_sample
         private void motorTrackBar4_Scroll(object sender, EventArgs e)
         {
             targetPosition4 = motorTrackBar4.Value / 10.0;
+        }
+
+        int deg = 0;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            deg += 1;
+            deg %= 360;
+
+            motorTrackBar1.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            motorTrackBar2.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            motorTrackBar3.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            motorTrackBar4.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+
+            targetPosition1 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
+            targetPosition2 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
+            targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
+            targetPosition4 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            timer1.Enabled = !timer1.Enabled;
         }
     }
 }
