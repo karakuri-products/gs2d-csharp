@@ -179,10 +179,10 @@ namespace gs2d_sample
             motorTrackBar3.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
             motorTrackBar4.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
 
-            targetPosition1 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
-            targetPosition2 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
-            targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
-            targetPosition4 = (Math.Sin(deg * (Math.PI / 180.0)) * 45.0);
+            targetPosition1 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            targetPosition2 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            targetPosition4 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
         }
 
         private void button3_Click(object sender, EventArgs e)
