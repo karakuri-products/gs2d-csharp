@@ -22,6 +22,8 @@ namespace gs2d_sample
         double targetPosition3 = 0.0;
         double targetPosition4 = 0.0;
 
+        bool[] enableFlag = new bool[4] { true, true, true, true };
+
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         internal CancellationToken token;
 
@@ -30,12 +32,12 @@ namespace gs2d_sample
             InitializeComponent();
         }
 
-        void TimeoutEvent()
+        void TimeoutEvent(byte id)
         {
             this.Invoke((MethodInvoker)(() =>
             {
                 tokenSource.Cancel();
-                MessageBox.Show("接続がタイムアウトしました");
+                MessageBox.Show("ID" + id.ToString() + "の接続がタイムアウトしました");
             }));
         }
 
@@ -86,12 +88,14 @@ namespace gs2d_sample
 
                 servo.TimeoutCallbackEvent += TimeoutEvent;
 
-                servo.WriteTorqueEnable(1, 1);
-                servo.WriteTorqueEnable(2, 1);
-                servo.WriteTorqueEnable(3, 1);
-                servo.WriteTorqueEnable(4, 1);
+                if (enableFlag[0]) servo.WriteTorqueEnable(1, 1);
+                if (enableFlag[1]) servo.WriteTorqueEnable(2, 1);
+                if (enableFlag[2]) servo.WriteTorqueEnable(3, 1);
+                if (enableFlag[3]) servo.WriteTorqueEnable(4, 1);
 
                 openButton.Text = "Close";
+
+                enable1CheckBox.Enabled = enable2CheckBox.Enabled = enable3CheckBox.Enabled = enable4CheckBox.Enabled = false;
 
                 tokenSource = new CancellationTokenSource();
                 token = tokenSource.Token;
@@ -126,26 +130,31 @@ namespace gs2d_sample
         {
             while(!cancelToken.IsCancellationRequested)
             {
-                servo.ReadTemperature(1, TemperatureCallback);
-                servo.ReadTemperature(2, TemperatureCallback);
-                servo.ReadTemperature(3, TemperatureCallback);
-                servo.ReadTemperature(4, TemperatureCallback);
+                if (enableFlag[0]) servo.ReadTemperature(1, TemperatureCallback);
+                if (enableFlag[1]) servo.ReadTemperature(2, TemperatureCallback);
+                if (enableFlag[2]) servo.ReadTemperature(3, TemperatureCallback);
+                if (enableFlag[3]) servo.ReadTemperature(4, TemperatureCallback);
                 
 
                 Dictionary<int, double> target = new Dictionary<int, double>();
 
-                target.Add(1, targetPosition1);
-                target.Add(2, targetPosition2);
-                target.Add(3, targetPosition3);
-                target.Add(4, targetPosition4);
+                if (enableFlag[0]) target.Add(1, targetPosition1);
+                if (enableFlag[1]) target.Add(2, targetPosition2);
+                if (enableFlag[2]) target.Add(3, targetPosition3);
+                if (enableFlag[3]) target.Add(4, targetPosition4);
 
                 servo.BurstWriteTargetPositions(target);
 
-                await Task.Delay(20);
+                await Task.Delay(50);
             }
 
             servo.Close();
-            openButton.Text = "Open";
+
+            this.Invoke((MethodInvoker)(() =>
+            {
+                enable1CheckBox.Enabled = enable2CheckBox.Enabled = enable3CheckBox.Enabled = enable4CheckBox.Enabled = true;
+                openButton.Text = "Open";
+            }));
         }
 
         private void motorTrackBar1_Scroll(object sender, EventArgs e)
@@ -174,20 +183,44 @@ namespace gs2d_sample
             deg += 1;
             deg %= 360;
 
-            motorTrackBar1.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
-            motorTrackBar2.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
-            motorTrackBar3.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
-            motorTrackBar4.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            if (enableFlag[0]) motorTrackBar1.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            if (enableFlag[1]) motorTrackBar2.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            if (enableFlag[2]) motorTrackBar3.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
+            if (enableFlag[3]) motorTrackBar4.Value = (int)(Math.Sin(deg * (Math.PI / 180.0)) * 150.0);
 
-            targetPosition1 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
-            targetPosition2 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
-            targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
-            targetPosition4 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            if (enableFlag[0]) targetPosition1 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            if (enableFlag[1]) targetPosition2 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            if (enableFlag[2]) targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
+            if (enableFlag[3]) targetPosition3 = (Math.Sin(deg * (Math.PI / 180.0)) * 15.0);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             timer1.Enabled = !timer1.Enabled;
+        }
+
+        private void enable1CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            enableFlag[0] = enable1CheckBox.Checked;
+            motorTrackBar1.Enabled = motorNumericUpDown1.Enabled = enableFlag[0];
+        }
+
+        private void enable2CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            enableFlag[1] = enable2CheckBox.Checked;
+            motorTrackBar2.Enabled = motorNumericUpDown2.Enabled = enableFlag[1];
+        }
+
+        private void enable3CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            enableFlag[2] = enable3CheckBox.Checked;
+            motorTrackBar3.Enabled = motorNumericUpDown3.Enabled = enableFlag[2];
+        }
+
+        private void enable4CheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            enableFlag[3] = enable4CheckBox.Checked;
+            motorTrackBar4.Enabled = motorNumericUpDown4.Enabled = enableFlag[3];
         }
     }
 }

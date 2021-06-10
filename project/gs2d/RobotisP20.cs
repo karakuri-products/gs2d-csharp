@@ -193,7 +193,7 @@ namespace gs2d
         private void burstWriteFunction(byte[] parameters)
         {
             byte[] command = generateCommand(0xFE, Instructions.SyncWrite, parameters, 0);
-            commandHandler.AddCommand(command, null, 0);
+            commandHandler.AddCommand(command, null, 0, new byte[1]{ 0 }); // ダミーIDを挿入。形式変更した方が良いかもしれない。
         }
 
         /// <summary>
@@ -267,13 +267,13 @@ namespace gs2d
 
             // コマンド送信
             byte[] command = generateCommand(id, instruction, parameters, length);
-            commandHandler.AddCommand(command, templateReceiveCallback, (uint)count);
+            commandHandler.AddCommand(command, templateReceiveCallback, (uint)count, parameters.Skip(4).Take(parameters.Length - 4).ToArray());
 
             // コールバックがあれば任せて終了
             if (callback != null || count == 0) return dataList;
 
             // タイムアウト関数を登録
-            Action timeoutEvent = () => {
+            Action<byte> timeoutEvent = (byte target) => {
                 error = 3;
                 is_received = true;
             };
@@ -366,7 +366,7 @@ namespace gs2d
 
             // コマンド送信
             byte[] command = generateCommand(id, instruction, parameters, length);
-            commandHandler.AddCommand(command, templateReceiveCallback);
+            commandHandler.AddCommand(command, templateReceiveCallback, 1, new byte[1] { id });
 
             // コールバックがあれば任せて終了
             if (callback != null)
@@ -374,7 +374,7 @@ namespace gs2d
                 return default(T);
             }
             // タイムアウト関数を登録
-            Action timeoutEvent = () => {
+            Action<byte> timeoutEvent = (byte target) => {
                 error = 3;
                 is_received = true;
             };
@@ -400,7 +400,7 @@ namespace gs2d
         {
             if (data != null) throw new InvalidResponseDataException("データが多すぎます");
         }
-
+        
         // ------------------------------------------------------------------------------------------
         // General
         public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)

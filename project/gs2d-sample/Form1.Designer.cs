@@ -48,6 +48,10 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.enable1CheckBox = new System.Windows.Forms.CheckBox();
+            this.enable2CheckBox = new System.Windows.Forms.CheckBox();
+            this.enable3CheckBox = new System.Windows.Forms.CheckBox();
+            this.enable4CheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar3)).BeginInit();
@@ -126,7 +130,7 @@
             this.motorTrackBar3.Maximum = 150;
             this.motorTrackBar3.Minimum = -150;
             this.motorTrackBar3.Name = "motorTrackBar3";
-            this.motorTrackBar3.Size = new System.Drawing.Size(239, 45);
+            this.motorTrackBar3.Size = new System.Drawing.Size(244, 45);
             this.motorTrackBar3.SmallChange = 5;
             this.motorTrackBar3.TabIndex = 0;
             this.motorTrackBar3.TickFrequency = 10;
@@ -148,7 +152,7 @@
             this.motorTrackBar4.Maximum = 150;
             this.motorTrackBar4.Minimum = -150;
             this.motorTrackBar4.Name = "motorTrackBar4";
-            this.motorTrackBar4.Size = new System.Drawing.Size(239, 45);
+            this.motorTrackBar4.Size = new System.Drawing.Size(244, 45);
             this.motorTrackBar4.SmallChange = 5;
             this.motorTrackBar4.TabIndex = 0;
             this.motorTrackBar4.TickFrequency = 10;
@@ -235,11 +239,67 @@
             this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // enable1CheckBox
+            // 
+            this.enable1CheckBox.AutoSize = true;
+            this.enable1CheckBox.Checked = true;
+            this.enable1CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enable1CheckBox.Location = new System.Drawing.Point(14, 290);
+            this.enable1CheckBox.Name = "enable1CheckBox";
+            this.enable1CheckBox.Size = new System.Drawing.Size(65, 16);
+            this.enable1CheckBox.TabIndex = 18;
+            this.enable1CheckBox.Text = "Use ID1";
+            this.enable1CheckBox.UseVisualStyleBackColor = true;
+            this.enable1CheckBox.CheckedChanged += new System.EventHandler(this.enable1CheckBox_CheckedChanged);
+            // 
+            // enable2CheckBox
+            // 
+            this.enable2CheckBox.AutoSize = true;
+            this.enable2CheckBox.Checked = true;
+            this.enable2CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enable2CheckBox.Location = new System.Drawing.Point(85, 290);
+            this.enable2CheckBox.Name = "enable2CheckBox";
+            this.enable2CheckBox.Size = new System.Drawing.Size(65, 16);
+            this.enable2CheckBox.TabIndex = 19;
+            this.enable2CheckBox.Text = "Use ID2";
+            this.enable2CheckBox.UseVisualStyleBackColor = true;
+            this.enable2CheckBox.CheckedChanged += new System.EventHandler(this.enable2CheckBox_CheckedChanged);
+            // 
+            // enable3CheckBox
+            // 
+            this.enable3CheckBox.AutoSize = true;
+            this.enable3CheckBox.Checked = true;
+            this.enable3CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enable3CheckBox.Location = new System.Drawing.Point(156, 290);
+            this.enable3CheckBox.Name = "enable3CheckBox";
+            this.enable3CheckBox.Size = new System.Drawing.Size(65, 16);
+            this.enable3CheckBox.TabIndex = 20;
+            this.enable3CheckBox.Text = "Use ID3";
+            this.enable3CheckBox.UseVisualStyleBackColor = true;
+            this.enable3CheckBox.CheckedChanged += new System.EventHandler(this.enable3CheckBox_CheckedChanged);
+            // 
+            // enable4CheckBox
+            // 
+            this.enable4CheckBox.AutoSize = true;
+            this.enable4CheckBox.Checked = true;
+            this.enable4CheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enable4CheckBox.Location = new System.Drawing.Point(227, 290);
+            this.enable4CheckBox.Name = "enable4CheckBox";
+            this.enable4CheckBox.Size = new System.Drawing.Size(65, 16);
+            this.enable4CheckBox.TabIndex = 21;
+            this.enable4CheckBox.Text = "Use ID4";
+            this.enable4CheckBox.UseVisualStyleBackColor = true;
+            this.enable4CheckBox.CheckedChanged += new System.EventHandler(this.enable4CheckBox_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 361);
+            this.Controls.Add(this.enable4CheckBox);
+            this.Controls.Add(this.enable3CheckBox);
+            this.Controls.Add(this.enable2CheckBox);
+            this.Controls.Add(this.enable1CheckBox);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.motorNumericUpDown4);
@@ -297,6 +357,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.CheckBox enable1CheckBox;
+        private System.Windows.Forms.CheckBox enable2CheckBox;
+        private System.Windows.Forms.CheckBox enable3CheckBox;
+        private System.Windows.Forms.CheckBox enable4CheckBox;
     }
 }
 

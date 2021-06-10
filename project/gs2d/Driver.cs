@@ -14,7 +14,7 @@ namespace gs2d
     {
         internal SerialPort serialPort;
         internal CommandHandler commandHandler;
-        public event Action TimeoutCallbackEvent;
+        public event Action<byte> TimeoutCallbackEvent;
 
         public Driver(string portName, int baudrate = 115200, Parity parity = Parity.None)
         {
@@ -29,9 +29,9 @@ namespace gs2d
         /// <summary>
         /// タイムアウト処理
         /// </summary>
-        virtual internal void TimeoutCallbackInvoker()
+        virtual internal void TimeoutCallbackInvoker(byte id)
         {
-            if (TimeoutCallbackEvent != null) TimeoutCallbackEvent.Invoke();
+            if (TimeoutCallbackEvent != null) TimeoutCallbackEvent.Invoke(id);
         }
 
         // ------------------------------------------------------------------------------------------
