@@ -152,13 +152,13 @@ namespace gs2d
 
             // コマンド送信
             byte[] command = generateCommand(id, instruction, parameters);
-            commandHandler.AddCommand(command, templateReceiveCallback, count);
+            commandHandler.AddCommand(command, templateReceiveCallback, count, new byte[1] { id });
 
             // コールバックがあれば任せて終了
             if (callback != null || count == 0) return default(T);
 
             // タイムアウト関数を登録
-            Action timeoutEvent = () => { isReceived = true; };
+            Action<byte> timeoutEvent = (byte target) => { isReceived = true; };
             TimeoutCallbackEvent += timeoutEvent;
 
             // 無ければ受信完了待ち

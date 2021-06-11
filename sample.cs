@@ -45,9 +45,9 @@ namespace gs2d_v1
         }
 
 
-        static void TimeoutEvent()
+        static void TimeoutEvent(byte id)
         {
-            Console.WriteLine("接続がタイムアウトしました");
+            Console.WriteLine("ID" + id.ToString() + "の接続がタイムアウトしました");
         }
 
         static void PingCallback(Dictionary<string, ushort> ping)

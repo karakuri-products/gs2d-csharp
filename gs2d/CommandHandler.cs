@@ -19,23 +19,25 @@ namespace gs2d
     internal struct CommandBufferType
     {
         public byte[] data;
+        public byte[] targetId;
         public ReceiveCallbackFunction callback;
         public uint servoCount;
 
 
-        public CommandBufferType(byte[] data, ReceiveCallbackFunction callback, uint servoCount = 1)
+        public CommandBufferType(byte[] data, ReceiveCallbackFunction callback, uint servoCount = 1, byte[] targetid = null)
         {
             this.data = new byte[data.Length];
             Array.Copy(data, this.data, data.Length);
             this.callback = callback;
             this.servoCount = servoCount;
+            this.targetId = targetid;
         }
     }
 
     internal class CommandHandler
     {
         // 受信タイムアウト（秒）
-        internal ushort receiveDataTimeoutSec = 10;
+        internal ushort receiveDataTimeoutSec = 1;
 
         // シリアルポート
         internal SerialPort serialPort;
@@ -52,8 +54,10 @@ namespace gs2d
         public IsCompleteResponseFunction isCompleteResponse;
 
         // タイムアウト処理用関数
-        public event Action TimeoutEvent;
+        public event Action<byte> TimeoutEvent;
         private bool timeoutFlag = false;
+        private byte targetId = 0;
+        private byte targetIdIndex = 0;
 
         // タイムアウト監視用タイマ
         internal System.Timers.Timer timeoutTimer;
@@ -90,7 +94,7 @@ namespace gs2d
                 await Task.Run(() =>
                 {
                     // タイムアウトハンドラを呼び出し
-                    if (TimeoutEvent != null) TimeoutEvent.Invoke();
+                    if (TimeoutEvent != null) TimeoutEvent.Invoke(targetId);
                     timeoutFlag = true;
                 });
             };
@@ -107,10 +111,10 @@ namespace gs2d
         /// <param name="data">送信するバイト列</param>
         /// <param name="receiveCallback">受信時のコールバック</param>
         /// <param name="servoCount">受信するコマンド数</param>
-        public void AddCommand(byte[] data, ReceiveCallbackFunction receiveCallback = null, uint servoCount = 1)
+        public void AddCommand(byte[] data, ReceiveCallbackFunction receiveCallback = null, uint servoCount = 1, byte[] targetid = null)
         {
             // コマンドキューにコマンドを追加
-            commandQueue.Add(new CommandBufferType(data, receiveCallback, servoCount));
+            commandQueue.Add(new CommandBufferType(data, receiveCallback, servoCount, targetid));
         }
 
         internal void Stop()
@@ -143,6 +147,11 @@ namespace gs2d
                 // タイマの再起動
                 // ToDo : 処理の見直し
                 StartTimeoutTimer();
+                if(currentCommand.targetId != null)
+                {
+                    targetIdIndex = 0;
+                    targetId = currentCommand.targetId[targetIdIndex];
+                }
             }
             else
             {
@@ -255,6 +264,12 @@ namespace gs2d
 
                             // タイムアウトタイマを初期化
                             StartTimeoutTimer();
+
+                            if (currentCommand.targetId != null)
+                            {
+                                targetIdIndex++;
+                                targetId = currentCommand.targetId[targetIdIndex];
+                            }
                         }
                     }
                 }

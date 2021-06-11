@@ -182,12 +182,12 @@ namespace gs2d
             };
 
             byte[] command = generateCommand(id, address, data, flag, 0, length);
-            commandHandler.AddCommand(command, templateReceiveCallback);
+            commandHandler.AddCommand(command, templateReceiveCallback, 1, new byte[1] { id });
 
             if (callback != null) return default(T);
 
             // タイムアウト関数を登録
-            Action timeoutEvent = () => {
+            Action<byte> timeoutEvent = (byte target) => {
                 isReceived = true;
             };
             TimeoutCallbackEvent += timeoutEvent;
@@ -222,7 +222,7 @@ namespace gs2d
             checkId(id);
 
             byte[] command = generateCommand(id, (byte)address, data);
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Ping
@@ -272,7 +272,7 @@ namespace gs2d
         {
             checkId(id);
             byte[] command = generateCommand(id, Address.TorqueEnable, new byte[1] { torque });
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Temperature
@@ -362,7 +362,7 @@ namespace gs2d
 
             checkId(id);
             byte[] command = generateCommand(id, Address.TargetPosition, BitConverter.GetBytes(positionInt));
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Current Position
@@ -439,7 +439,7 @@ namespace gs2d
 
             checkId(id);
             byte[] command = generateCommand(id, Address.TargetTime, BitConverter.GetBytes(targetTimeInt));
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Accel Time
@@ -481,7 +481,7 @@ namespace gs2d
 
             checkId(id);
             byte[] command = generateCommand(id, Address.PGain, new byte[1] { (byte)gain });
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // I Gain
@@ -539,7 +539,7 @@ namespace gs2d
             else if (maxTorque > 100) maxTorque = 100;
 
             byte[] command = generateCommand(id, Address.MaxTorque, new byte[1] { (byte)maxTorque });
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Speed
@@ -590,7 +590,7 @@ namespace gs2d
             checkId((byte)servoid);
 
             byte[] command = generateCommand(id, Address.Id, new byte[1] { (byte)servoid });
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // ROM
@@ -600,7 +600,7 @@ namespace gs2d
             checkId(id);
 
             byte[] command = generateCommand(id, Address.WriteFlashRom, null, 0x40, 0);
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
         public override void LoadROM(byte id)
         {
@@ -612,7 +612,7 @@ namespace gs2d
             checkId(id);
 
             byte[] command = generateCommand(id, Address.ResetMemory, null, 0x10, 0);
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Baudrate
@@ -650,7 +650,7 @@ namespace gs2d
             if (baudrateId == 100) throw new BadInputParametersException("Baudrateが不正です");
 
             byte[] command = generateCommand(id, Address.Baudrate, new byte[1] { (byte)baudrateId });
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // CW Limit Position
@@ -687,7 +687,7 @@ namespace gs2d
             short cwLimitShort = (short)(cwLimit * -10);
 
             byte[] command = generateCommand(id, Address.CWLimit, BitConverter.GetBytes(cwLimitShort) );
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // CCW Limit Position
@@ -724,7 +724,7 @@ namespace gs2d
             short ccwLimitShort = (short)(ccwLimit * -10);
 
             byte[] command = generateCommand(id, Address.CCWLimit, BitConverter.GetBytes(ccwLimitShort));
-            commandHandler.AddCommand(command);
+            commandHandler.AddCommand(command, null, 1, new byte[1] { id });
         }
 
         // Temperature Limit
