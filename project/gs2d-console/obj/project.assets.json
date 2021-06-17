@@ -451,19 +451,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\radia\\.nuget\\packages\\": {}
+    "C:\\Users\\p\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d-console\\gs2d-console.csproj",
+      "projectUniqueName": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\gs2d-console.csproj",
       "projectName": "gs2d-console",
-      "projectPath": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d-console\\gs2d-console.csproj",
-      "packagesPath": "C:\\Users\\radia\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d-console\\obj\\",
+      "projectPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\gs2d-console.csproj",
+      "packagesPath": "C:\\Users\\p\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\radia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\p\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -476,8 +480,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj": {
-              "projectPath": "C:\\Users\\radia\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj"
+            "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d\\gs2d.csproj": {
+              "projectPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d\\gs2d.csproj"
             }
           }
         }
@@ -491,21 +495,10 @@
     "frameworks": {
       "netcoreapp3.1": {
         "imports": [
-          "net461",
-          "net462",
-          "net47",
-          "net471",
-          "net472",
-          "net48"
+          "net461"
         ],
         "assetTargetFallback": true,
-        "warn": true,
-        "frameworkReferences": {
-          "Microsoft.NETCore.App": {
-            "privateAssets": "all"
-          }
-        },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "warn": true
       }
     }
   }

@@ -1291,7 +1291,19 @@ namespace gs2d
 
         public override void BurstWriteMemory(Dictionary<int, byte[]> idDataList, ushort address, ushort length)
         {
-            byte[] param = generateParametersSyncWrite((byte)address, length, idDataList);
+            Dictionary<int, int> idDataListTmp = new Dictionary<int, int>();
+
+            foreach (KeyValuePair<int, byte[]> item in idDataList)
+            {
+                int tmp = 0;
+                for(int i = 0; i < item.Value.Length; i++)
+                {
+                    tmp += (item.Value[i] << (i * 8));
+                }
+                idDataListTmp.Add(item.Key, tmp);
+            }
+
+            byte[] param = generateParametersSyncWrite((byte)address, length, idDataListTmp);
             burstWriteFunction(param);
             //            getFunctionBurstRead<byte[]>(0xFE, Instructions.SyncWrite, 0, param, null, null);
         }
