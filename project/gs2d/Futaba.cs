@@ -797,7 +797,7 @@ namespace gs2d
                 checkId((byte)item.Key);
             }
 
-            byte[] command = generateBurstCommand(0, (byte)address, (byte)length, idDataList, 0, (byte)idDataList.Count);
+            byte[] command = generateBurstCommand(0, (byte)address, (byte)(length + 1), idDataList, 0, (byte)idDataList.Count);
             commandHandler.AddCommand(command);
         }
 
