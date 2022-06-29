@@ -210,6 +210,8 @@ namespace gs2d
                     timeoutFlag = false;
                 }
 
+                if (!sp.IsOpen) continue;
+
                 // 無意味なデータを無視
                 if (isTrafficFree)
                 {
