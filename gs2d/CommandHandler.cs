@@ -192,7 +192,9 @@ namespace gs2d
                     return;
                 }
 
-                if(timeoutFlag)
+                if (!sp.IsOpen) continue;
+
+                if (timeoutFlag)
                 {
                     // コマンドキューから削除
                     commandQueue.RemoveAt(0);
@@ -210,7 +212,6 @@ namespace gs2d
                     timeoutFlag = false;
                 }
 
-                if (!sp.IsOpen) continue;
 
                 // 無意味なデータを無視
                 if (isTrafficFree)

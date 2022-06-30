@@ -19,9 +19,16 @@ namespace gs2d
         public Driver(string portName, int baudrate = 115200, Parity parity = Parity.None)
         {
             Open(baudrate, portName, parity);
+        }
 
-            commandHandler = new CommandHandler(IsCompleteResponse, serialPort);
-            commandHandler.TimeoutEvent += TimeoutCallbackInvoker;
+        public Driver()
+        {
+
+        }
+
+        ~Driver()
+        {
+            Close();
         }
 
         abstract internal bool IsCompleteResponse(byte[] data);
@@ -35,7 +42,14 @@ namespace gs2d
         }
 
         // ------------------------------------------------------------------------------------------
-        virtual public void Close() { serialPort.Close();  }
+        virtual public void Close() 
+        {
+            if (serialPort.IsOpen)
+            {
+                commandHandler.Stop();
+                serialPort.Close();
+            }
+        }
         virtual public void Open(int baudrate, string portName, Parity parity = Parity.None)
         {
             if (serialPort.IsOpen) serialPort.Close();
@@ -56,6 +70,9 @@ namespace gs2d
                 serialPort.Open();
             }
             catch (Exception ex) { throw ex; }
+
+            commandHandler = new CommandHandler(IsCompleteResponse, serialPort);
+            commandHandler.TimeoutEvent += TimeoutCallbackInvoker;
         }
 
 
