@@ -52,7 +52,7 @@ namespace gs2d
         }
         virtual public void Open(int baudrate, string portName, Parity parity = Parity.None)
         {
-            if (serialPort.IsOpen) serialPort.Close();
+            if (serialPort != null && serialPort.IsOpen) serialPort.Close();
 
             // Serial Port
             serialPort = new SerialPort();

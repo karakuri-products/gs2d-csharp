@@ -25,6 +25,15 @@ namespace gs2d
 
         }
 
+        public KRS() : base()
+        {
+
+        }
+        ~KRS()
+        {
+
+        }
+
         internal override bool IsCompleteResponse(byte[] data)
         {
             if (data.Length == 0) return false;

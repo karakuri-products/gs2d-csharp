@@ -62,6 +62,16 @@ namespace gs2d
 
         }
 
+        public B3M() : base()
+        {
+
+        }
+
+        ~B3M()
+        {
+
+        }
+
         /// <summary>
         /// 受信完了チェック関数
         /// </summary>

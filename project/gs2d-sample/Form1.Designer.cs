@@ -52,6 +52,7 @@
             this.enable2CheckBox = new System.Windows.Forms.CheckBox();
             this.enable3CheckBox = new System.Windows.Forms.CheckBox();
             this.enable4CheckBox = new System.Windows.Forms.CheckBox();
+            this.servoTypeComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.motorTrackBar3)).BeginInit();
@@ -160,7 +161,7 @@
             // 
             // openButton
             // 
-            this.openButton.Location = new System.Drawing.Point(141, 10);
+            this.openButton.Location = new System.Drawing.Point(211, 10);
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(75, 23);
             this.openButton.TabIndex = 9;
@@ -170,7 +171,7 @@
             // 
             // reloadButton
             // 
-            this.reloadButton.Location = new System.Drawing.Point(222, 10);
+            this.reloadButton.Location = new System.Drawing.Point(292, 10);
             this.reloadButton.Name = "reloadButton";
             this.reloadButton.Size = new System.Drawing.Size(75, 23);
             this.reloadButton.TabIndex = 10;
@@ -291,11 +292,25 @@
             this.enable4CheckBox.UseVisualStyleBackColor = true;
             this.enable4CheckBox.CheckedChanged += new System.EventHandler(this.enable4CheckBox_CheckedChanged);
             // 
+            // servoTypeComboBox
+            // 
+            this.servoTypeComboBox.FormattingEnabled = true;
+            this.servoTypeComboBox.Items.AddRange(new object[] {
+            "DXL",
+            "B3M",
+            "KRS",
+            "FTB"});
+            this.servoTypeComboBox.Location = new System.Drawing.Point(141, 12);
+            this.servoTypeComboBox.Name = "servoTypeComboBox";
+            this.servoTypeComboBox.Size = new System.Drawing.Size(64, 20);
+            this.servoTypeComboBox.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(384, 361);
+            this.Controls.Add(this.servoTypeComboBox);
             this.Controls.Add(this.enable4CheckBox);
             this.Controls.Add(this.enable3CheckBox);
             this.Controls.Add(this.enable2CheckBox);
@@ -361,6 +376,7 @@
         private System.Windows.Forms.CheckBox enable2CheckBox;
         private System.Windows.Forms.CheckBox enable3CheckBox;
         private System.Windows.Forms.CheckBox enable4CheckBox;
+        private System.Windows.Forms.ComboBox servoTypeComboBox;
     }
 }
 

@@ -34,3 +34,13 @@ C:\Users\p\Documents\gs2d-csharp-github-v2\project\gs2d\obj\Debug\netstandard2.0
 C:\Users\p\Documents\gs2d-csharp-github-v2\project\gs2d\obj\Debug\netstandard2.0\gs2d.AssemblyInfo.cs
 C:\Users\p\Documents\gs2d-csharp-github-v2\project\gs2d\obj\Debug\netstandard2.0\gs2d.dll
 C:\Users\p\Documents\gs2d-csharp-github-v2\project\gs2d\obj\Debug\netstandard2.0\gs2d.pdb
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\bin\Debug\netstandard2.0\gs2d.deps.json
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\bin\Debug\netstandard2.0\gs2d.dll
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\bin\Debug\netstandard2.0\gs2d.pdb
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.csproj.AssemblyReference.cache
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.AssemblyInfoInputs.cache
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.AssemblyInfo.cs
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.csproj.CoreCompileInputs.cache
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.dll
+C:\Users\shiki\Documents\gs2d-csharp\project\gs2d\obj\Debug\netstandard2.0\gs2d.pdb

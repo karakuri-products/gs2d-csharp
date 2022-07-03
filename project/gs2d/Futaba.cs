@@ -46,6 +46,11 @@ namespace gs2d
 
         }
 
+        public Futaba() : base()
+        {
+
+        }
+
         /// <summary>
         /// 受信完了チェック関数
         /// </summary>

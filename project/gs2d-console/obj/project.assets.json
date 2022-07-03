@@ -451,23 +451,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\p\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\shiki\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\gs2d-console.csproj",
+      "projectUniqueName": "C:\\Users\\shiki\\Documents\\gs2d-csharp\\project\\gs2d-console\\gs2d-console.csproj",
       "projectName": "gs2d-console",
-      "projectPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\gs2d-console.csproj",
-      "packagesPath": "C:\\Users\\p\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d-console\\obj\\",
+      "projectPath": "C:\\Users\\shiki\\Documents\\gs2d-csharp\\project\\gs2d-console\\gs2d-console.csproj",
+      "packagesPath": "C:\\Users\\shiki\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\shiki\\Documents\\gs2d-csharp\\project\\gs2d-console\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\p\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\shiki\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -479,9 +475,10 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d\\gs2d.csproj": {
-              "projectPath": "C:\\Users\\p\\Documents\\gs2d-csharp-github-v2\\project\\gs2d\\gs2d.csproj"
+            "C:\\Users\\shiki\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj": {
+              "projectPath": "C:\\Users\\shiki\\Documents\\gs2d-csharp\\project\\gs2d\\gs2d.csproj"
             }
           }
         }
@@ -494,11 +491,41 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "imports": [
-          "net461"
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
         ],
         "assetTargetFallback": true,
-        "warn": true
+        "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[3.1.10, 3.1.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[3.1.21, 3.1.21]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

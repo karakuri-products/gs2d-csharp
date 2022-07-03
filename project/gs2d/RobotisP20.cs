@@ -69,6 +69,16 @@ namespace gs2d
 
         }
 
+        public RobotisP20() : base()
+        {
+
+        }
+
+        ~RobotisP20()
+        {
+
+        }
+
         /// <summary>
         /// 受信完了チェック関数
         /// </summary>

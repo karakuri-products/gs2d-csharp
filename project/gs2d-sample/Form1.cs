@@ -71,6 +71,7 @@ namespace gs2d_sample
             // 補完について残す
 
             ReloadComPort();
+            servoTypeComboBox.SelectedIndex = 0;
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -84,7 +85,15 @@ namespace gs2d_sample
             {
                 // 指定のCOMポートを開く
                 string port = (string)comComboBox.SelectedItem;
-                servo = new RobotisP20(port, 57600);
+
+                switch (servoTypeComboBox.SelectedIndex)
+                {
+                    case 0: servo = new RobotisP20(port, 115200); break;
+                    case 1: servo = new B3M(port, 115200); break;
+                    case 2: servo = new KRS(port, 115200); break;
+                    case 3: servo = new Futaba(port, 115200); break;
+                }
+                
 
                 servo.TimeoutCallbackEvent += TimeoutEvent;
 

@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "f142dcd3-4ae7-49eb-9022-b4d694b66971": {
+      "ProjectGuid": "f142dcd3-4ae7-49eb-9022-b4d694b66971",
+      "DisplayName": "gs2d",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "その他のファイル",
+      "ColorIndex": -1
+    },
+    "e6a5ba64-8e46-4b9c-abca-63599708f26b": {
+      "ProjectGuid": "e6a5ba64-8e46-4b9c-abca-63599708f26b",
+      "DisplayName": "gs2d-sample",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
