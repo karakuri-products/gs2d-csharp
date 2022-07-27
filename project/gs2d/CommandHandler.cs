@@ -212,14 +212,6 @@ namespace gs2d
                     timeoutFlag = false;
                 }
 
-
-                // 無意味なデータを無視
-                if (isTrafficFree)
-                {
-                    if (commandQueue.Count != 0) SendCommand();
-                    else continue;
-                }
-
                 // 100バイト以下受信
                 await Task.Run(() =>
                 {
@@ -230,6 +222,13 @@ namespace gs2d
                     }
                     catch (Exception ex) { }
                 });
+
+                // 無意味なデータを無視
+                if (isTrafficFree)
+                {
+                    if (commandQueue.Count != 0) SendCommand();
+                    else continue;
+                }
 
                 for (int pos = 0; pos < length; pos++)
                 {
