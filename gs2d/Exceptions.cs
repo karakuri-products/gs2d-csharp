@@ -25,6 +25,13 @@ namespace gs2d
         public BadInputParametersException(string message, Exception inner) : base(message, inner) { }
     }
 
+    public class InvalidModeException : Exception
+    {
+        public InvalidModeException() { }
+        public InvalidModeException(string message) : base(message) { }
+        public InvalidModeException(string message, Exception inner) : base(message, inner) { }
+    }
+
     public class InvalidResponseDataException : Exception
     {
         public InvalidResponseDataException() { }

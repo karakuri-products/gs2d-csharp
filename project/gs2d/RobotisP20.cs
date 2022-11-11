@@ -37,6 +37,7 @@ namespace gs2d
             public const byte Id = 7;
             public const byte Baudrate = 8;
             public const byte DriveMode = 10;
+            public const byte OperatingMode = 11;
             public const byte HomingOffset = 20;
             public const byte TemperatureLimit = 31;
             public const byte CurrentLimit = 38;
@@ -714,11 +715,70 @@ namespace gs2d
             throw new NotSupportedException("RobotisP20ではWriteDeadbandに対応していません。");
         }
 
+        // Operating Mode
+        public int ReadOperatingMode(byte id, Action<byte, int> callback = null)
+        {
+            // IDチェック
+            checkId(id);
+
+            // パラメータ生成
+            byte[] param = generateParameters(Address.OperatingMode, 1, 2);
+
+            Func<byte[], int> responseProcess = (response) =>
+            {
+                if (response != null && response.Length == 1)
+                {
+                    return response[0];
+
+                }
+                throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
+            };
+
+            // 送信
+            return getFunction<int>(id, Instructions.Read, param, responseProcess, callback);
+        }
+        public async Task<int> ReadOperatingModeAsync(byte id, Action<byte, int> callback = null)
+        {
+            return await Task.Run(() => ReadOperatingMode(id, callback));
+        }
+        public  void WriteOperatingMode(byte id, int operatingMode)
+        {
+            // IDチェック
+            checkId(id);
+
+            // 値を変換
+            if (operatingMode > 16)
+            {
+                throw new BadInputParametersException("OperatingModeがレンジ外です");
+            }
+
+            // パラメータ生成
+            byte[] param = generateParameters(Address.OperatingMode, (uint)(operatingMode), 1);
+            getFunction<byte[]>(id, Instructions.Write, param, null, defaultWriteCallback);
+        }
+
         // Target Time
         public override double ReadTargetTime(byte id, Action<byte, double> callback = null)
         {
             // IDチェック
             checkId(id);
+
+            // Drive Modeチェック
+            if((ReadDriveMode(id) & 0x04) == 0){
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を1に設定してください。");
+       			/*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
+            
 
             // パラメータ生成
             byte[] param = generateParameters(Address.ProfileVelocity, 4, 2);
@@ -745,6 +805,23 @@ namespace gs2d
         {
             // IDチェック
             checkId(id);
+
+            // Drive Modeチェック
+            if ((ReadDriveMode(id) & 0x04) == 0)
+            {
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を1に設定してください。");
+                /*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
 
             // 値を変換
             if (targetTime < 0) targetTime = 0;
@@ -935,6 +1012,23 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
+            // Drive Modeチェック
+            if ((ReadDriveMode(id) & 0x04) != 0)
+            {
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を0に設定してください。");
+                /*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
+
             // パラメータ生成
             byte[] param = generateParameters(Address.PresentVelocity, 4, 2);
 
@@ -959,6 +1053,23 @@ namespace gs2d
         {
             // IDチェック
             checkId(id);
+
+            // Drive Modeチェック
+            if ((ReadDriveMode(id) & 0x04) != 0)
+            {
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を0に設定してください。");
+                /*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
 
             // 値を変換
             int rev_min = (int)(speed / 0.229 / 6.0);
@@ -1081,6 +1192,23 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
+            // Operating Modeチェック
+            if (ReadOperatingMode(id) != 3)
+            {
+                throw new InvalidModeException("OperatingModeレジスタの値が不正です。WriteOperatingModeで3に設定してください。");
+                /*
+				* DynamixelのOperatingModeレジスタが3の時のみ有効です。writeOperatingModeで変更してください。
+				*
+				* Operating Mode :
+				* 0 : Current Control Mode
+				* 1 : Velocity Control Mode
+				* 3(Default) : Position Control Mode
+				* 4 : Extended Position Control Mode
+				* 5 : Current-based Position Control Mode
+				* 16 : PWM Control Mode
+				*/
+            }
+
             // パラメータ生成
             byte[] param = generateParameters(Address.MinPositionLimit, 4, 2);
 
@@ -1106,6 +1234,23 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
+            // Operating Modeチェック
+            if (ReadOperatingMode(id) != 3)
+            {
+                throw new InvalidModeException("OperatingModeレジスタの値が不正です。WriteOperatingModeで3に設定してください。");
+                /*
+				* DynamixelのOperatingModeレジスタが3の時のみ有効です。writeOperatingModeで変更してください。
+				*
+				* Operating Mode :
+				* 0 : Current Control Mode
+				* 1 : Velocity Control Mode
+				* 3(Default) : Position Control Mode
+				* 4 : Extended Position Control Mode
+				* 5 : Current-based Position Control Mode
+				* 16 : PWM Control Mode
+				*/
+            }
+
             // 値を変換
             if (cwLimit > 0 || cwLimit < -180)
             {
@@ -1123,6 +1268,23 @@ namespace gs2d
         {
             // IDチェック
             checkId(id);
+
+            // Operating Modeチェック
+            if (ReadOperatingMode(id) != 3)
+            {
+                throw new InvalidModeException("OperatingModeレジスタの値が不正です。WriteOperatingModeで3に設定してください。");
+                /*
+				* DynamixelのOperatingModeレジスタが3の時のみ有効です。writeOperatingModeで変更してください。
+				*
+				* Operating Mode :
+				* 0 : Current Control Mode
+				* 1 : Velocity Control Mode
+				* 3(Default) : Position Control Mode
+				* 4 : Extended Position Control Mode
+				* 5 : Current-based Position Control Mode
+				* 16 : PWM Control Mode
+				*/
+            }
 
             // パラメータ生成
             byte[] param = generateParameters(Address.MaxPositionLimit, 4, 2);
@@ -1148,6 +1310,23 @@ namespace gs2d
         {
             // IDチェック
             checkId(id);
+
+            // Operating Modeチェック
+            if (ReadOperatingMode(id) != 3)
+            {
+                throw new InvalidModeException("OperatingModeレジスタの値が不正です。WriteOperatingModeで3に設定してください。");
+                /*
+				* DynamixelのOperatingModeレジスタが3の時のみ有効です。writeOperatingModeで変更してください。
+				*
+				* Operating Mode :
+				* 0 : Current Control Mode
+				* 1 : Velocity Control Mode
+				* 3(Default) : Position Control Mode
+				* 4 : Extended Position Control Mode
+				* 5 : Current-based Position Control Mode
+				* 16 : PWM Control Mode
+				*/
+            }
 
             // 値を変換
             if (ccwLimit > 180 || ccwLimit < 0)
