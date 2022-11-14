@@ -12,8 +12,14 @@ namespace gs2d
 {
     public class KRS : Driver
     {
-        bool isReadRomFlag = false;
-        byte[] eepromData = new byte[64];
+        class KRSRom
+        {
+            public byte id = 0;
+            public byte[] data = new byte[64];
+        }
+
+        List<KRSRom> eepromList = new List<KRSRom>();
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -82,9 +88,11 @@ namespace gs2d
             ReceiveCallbackFunction templateReceiveCallback = (response) =>
             {
                 byte[] responseData;
+                KRSRom rom = new KRSRom();
 
                 // コマンドから必要なデータを抜き出し
                 byte header = (byte)((response[0] & 0b11100000) >> 5);
+                byte responseId = (byte)((response[0] & 0b11111));
                 switch (header)
                 {
                     case 0: responseData = response.Skip(1).Take(2).ToArray(); break;
@@ -93,8 +101,23 @@ namespace gs2d
                         {
                             case 0:
                                 responseData = response.Skip(2).Take(64).ToArray();
-                                Array.Copy(responseData, eepromData, 64);
-                                isReadRomFlag = true;
+
+                                for(int i = 0; i < eepromList.Count; i++)
+                                {
+                                    if(eepromList[i].id == responseId)
+                                    {
+                                        Array.Copy(responseData, eepromList[i].data, 64);
+                                        break;
+                                    }
+
+                                    if(i == eepromList.Count - 1)
+                                    {
+                                        rom.id = responseId;
+                                        Array.Copy(responseData, rom.data, 64);
+                                        eepromList.Add(rom);
+                                    }
+                                }
+
                                 break;
                             case 5: responseData = response.Skip(2).Take(2).ToArray();
                                 break;
@@ -152,6 +175,15 @@ namespace gs2d
 
         }
 
+        int isRomDataAvailable(byte id)
+        {
+            for (int t = 0; t < eepromList.Count; t++)
+            {
+                if (eepromList[t].id == id) return t;
+            }
+            return -1;
+        }
+
         // ------------------------------------------------------------------------------------------
         // General
         public override byte[] ReadMemory(byte id, ushort address, ushort length, Action<byte, byte[]> callback = null)
@@ -177,19 +209,20 @@ namespace gs2d
         public override void WriteMemory(byte id, ushort address, byte[] data)
         {
             checkId(id);
-            if (isReadRomFlag == false) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
             if (address + data.Length > 64) throw new BadInputParametersException("アドレスが範囲外です");
 
             // EEPROMデータを書き換え
             for (int i = 0; i < data.Length; i++)
             {
-                eepromData[address + i] = data[i];
+                eepromList[listPos].data[address + i] = data[i];
             }
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
             command[1] = 0;
-            Array.Copy(eepromData, 0, command, 2, 64);
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
@@ -395,16 +428,17 @@ namespace gs2d
         public override void WriteDeadband(byte id, double deadband)
         {
             checkId(id);
-            if (isReadRomFlag == false) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
             if (deadband < 0) deadband = 0;
             else if (deadband > 5) deadband = 5;
 
-            eepromData[8] = 0; eepromData[9] = (byte)deadband;
+            eepromList[listPos].data[8] = 0; eepromList[listPos].data[9] = (byte)deadband;
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
             command[1] = 0;
-            Array.Copy(eepromData, 0, command, 2, 64);
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
@@ -626,19 +660,20 @@ namespace gs2d
         public override void WriteBaudrate(byte id, int baudrate)
         {
             checkId(id);
-            if (isReadRomFlag == false) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
-            if(!(baudrate == 115200 || baudrate == 625000 || baudrate == 1250000))
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
+            if (!(baudrate == 115200 || baudrate == 625000 || baudrate == 1250000))
             {
                 throw new BadInputParametersException("指定された通信速度は使用できません");
             }
-            if (baudrate == 115200) eepromData[27] = 0x0A;
-            else if (baudrate == 625000) eepromData[27] = 0x01;
-            else eepromData[27] = 0x00;
+            if (baudrate == 115200) eepromList[listPos].data[27] = 0x0A;
+            else if (baudrate == 625000) eepromList[listPos].data[27] = 0x01;
+            else eepromList[listPos].data[27] = 0x00;
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
             command[1] = 0;
-            Array.Copy(eepromData, 0, command, 2, 64);
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
@@ -669,21 +704,22 @@ namespace gs2d
         public override void WriteLimitCWPosition(byte id, double cwLimit)
         {
             checkId(id);
-            if (isReadRomFlag == false) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
             if (cwLimit < -135) cwLimit = -135;
             else if (cwLimit > 135) cwLimit = 135;
 
             int position = (int)(7500 - cwLimit * 29.629);
 
-            eepromData[16] = (byte)((position >> 12) & 0x0F);
-            eepromData[17] = (byte)((position >> 8) & 0x0F);
-            eepromData[18] = (byte)((position >> 4) & 0x0F);
-            eepromData[19] = (byte)((position >> 0) & 0x0F);
+            eepromList[listPos].data[16] = (byte)((position >> 12) & 0x0F);
+            eepromList[listPos].data[17] = (byte)((position >> 8) & 0x0F);
+            eepromList[listPos].data[18] = (byte)((position >> 4) & 0x0F);
+            eepromList[listPos].data[19] = (byte)((position >> 0) & 0x0F);
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
             command[1] = 0;
-            Array.Copy(eepromData, 0, command, 2, 64);
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
@@ -714,21 +750,22 @@ namespace gs2d
         public override void WriteLimitCCWPosition(byte id, double ccwLimit)
         {
             checkId(id);
-            if (isReadRomFlag == false) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
             if (ccwLimit < -135) ccwLimit = -135;
             else if (ccwLimit > 135) ccwLimit = 135;
 
             int position = (int)(7500 - ccwLimit * 29.629);
 
-            eepromData[20] = (byte)((position >> 12) & 0x0F);
-            eepromData[21] = (byte)((position >> 8) & 0x0F);
-            eepromData[22] = (byte)((position >> 4) & 0x0F);
-            eepromData[23] = (byte)((position >> 0) & 0x0F);
+            eepromList[listPos].data[20] = (byte)((position >> 12) & 0x0F);
+            eepromList[listPos].data[21] = (byte)((position >> 8) & 0x0F);
+            eepromList[listPos].data[22] = (byte)((position >> 4) & 0x0F);
+            eepromList[listPos].data[23] = (byte)((position >> 0) & 0x0F);
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
             command[1] = 0;
-            Array.Copy(eepromData, 0, command, 2, 64);
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
