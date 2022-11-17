@@ -839,6 +839,23 @@ namespace gs2d
             // IDチェック
             checkId(id);
 
+            // Drive Modeチェック
+            if ((ReadDriveMode(id) & 0x04) == 0)
+            {
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を1に設定してください。");
+                /*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
+
             // パラメータ生成
             byte[] param = generateParameters(Address.ProfileAcceleration, 4, 2);
 
@@ -864,6 +881,23 @@ namespace gs2d
         {
             // IDチェック
             checkId(id);
+
+            // Drive Modeチェック
+            if ((ReadDriveMode(id) & 0x04) == 0)
+            {
+                throw new InvalidModeException("DriveModeレジスタの値が不正です。WriteDriveModeでBit2を1に設定してください。");
+                /*
+				* DynamixelのDriveModeレジスタのBit2が1の場合のみ遷移時間指定が可能です。writeDriveModeで変更してください。
+				* 
+				* Drive Mode :
+				* 0b00000100
+				*   |||||||+------- Reverse Mode
+				*   ||||||+-------- Unused
+				*   |||||+--------- Time-based Profile
+				*   ||||+---------- Torque On by Goal-Update
+				*   ++++----------- Unused
+				*/
+            }
 
             // 値を変換
             if (accelTime < 0) accelTime = 0;
