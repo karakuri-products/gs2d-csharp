@@ -102,19 +102,28 @@ namespace gs2d
                             case 0:
                                 responseData = response.Skip(2).Take(64).ToArray();
 
-                                for(int i = 0; i < eepromList.Count; i++)
+                                if(eepromList.Count == 0)
                                 {
-                                    if(eepromList[i].id == responseId)
+                                    rom.id = responseId;
+                                    Array.Copy(responseData, rom.data, 64);
+                                    eepromList.Add(rom);
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < eepromList.Count; i++)
                                     {
-                                        Array.Copy(responseData, eepromList[i].data, 64);
-                                        break;
-                                    }
+                                        if (eepromList[i].id == responseId)
+                                        {
+                                            Array.Copy(responseData, eepromList[i].data, 64);
+                                            break;
+                                        }
 
-                                    if(i == eepromList.Count - 1)
-                                    {
-                                        rom.id = responseId;
-                                        Array.Copy(responseData, rom.data, 64);
-                                        eepromList.Add(rom);
+                                        if (i == eepromList.Count - 1)
+                                        {
+                                            rom.id = responseId;
+                                            Array.Copy(responseData, rom.data, 64);
+                                            eepromList.Add(rom);
+                                        }
                                     }
                                 }
 
