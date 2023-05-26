@@ -257,6 +257,8 @@ namespace gs2d
                             // キューに続きがある場合は送信開始
                             if (commandQueue.Count != 0) SendCommand();
                             else isTrafficFree = true;
+
+                            break;
                         }
                         else
                         {
