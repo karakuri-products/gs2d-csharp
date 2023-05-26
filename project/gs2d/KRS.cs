@@ -596,31 +596,41 @@ namespace gs2d
         // ID
         public override int ReadID(byte id, Action<byte, int> callback = null)
         {
-            byte[] command = new byte[4] { 0xFF, 0, 0, 0 };
+            byte[] command = new byte[2] { (byte)(0b10100000 | id), 0x00 };
+
+            checkId(id);
+
             Func<byte[], int> responseProcess = (response) =>
             {
-                if (response != null && response.Length == 1)
+                if (response != null && response.Length == 64)
                 {
-                    return response[0] & 0b11111;
+                    byte[] res = response.Skip(56).Take(2).ToArray();
+                    int currentID = (int)((res[1] << 4) | (res[0]));
+
+                    return currentID;
                 }
                 throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
             };
-
             return getFunction(command, responseProcess, callback);
         }
+
         public override async Task<int> ReadIDAsync(byte id, Action<byte, int> callback = null)
         {
             return await Task.Run(() => ReadID(id, callback));
         }
         public override void WriteID(byte id, int servoid)
         {
-            byte[] command = new byte[4] { 0b11100000, 1, 1, 1 };
-
             checkId(id);
-            checkId((byte)servoid);
+            int listPos = isRomDataAvailable(id);
+            if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
 
-            command[0] += (byte)servoid;
+            eepromList[listPos].data[57] = (byte)(servoid & 0x0F);
+            eepromList[listPos].data[58] = (byte)((servoid >> 4) & 0x0F);
 
+            byte[] command = new byte[66];
+            command[0] = (byte)(0b11000000 | id);
+            command[1] = 0;
+            Array.Copy(eepromList[listPos].data, 0, command, 2, 64);
             getFunction<byte[]>(command, null, defaultWriteCallback);
         }
 
