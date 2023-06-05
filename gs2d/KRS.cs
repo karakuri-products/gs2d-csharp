@@ -605,7 +605,7 @@ namespace gs2d
                 if (response != null && response.Length == 64)
                 {
                     byte[] res = response.Skip(56).Take(2).ToArray();
-                    int currentID = (int)((res[1] << 4) | (res[0]));
+                    int currentID = (int)((res[0] << 4) | (res[1]));
 
                     return currentID;
                 }
@@ -624,8 +624,8 @@ namespace gs2d
             int listPos = isRomDataAvailable(id);
             if (listPos < 0) throw new NotSupportException("KRSサーボの場合、書き込みの前に一度EEPROMを読み込んでください");
 
-            eepromList[listPos].data[57] = (byte)(servoid & 0x0F);
-            eepromList[listPos].data[58] = (byte)((servoid >> 4) & 0x0F);
+            eepromList[listPos].data[57] = (byte)((servoid >> 4) & 0x0F);
+            eepromList[listPos].data[58] = (byte)((servoid >> 0) & 0x0F);
 
             byte[] command = new byte[66];
             command[0] = (byte)(0b11000000 | id);
