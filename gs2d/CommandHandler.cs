@@ -215,12 +215,19 @@ namespace gs2d
                 // 100バイト以下受信
                 await Task.Run(() =>
                 {
-                    // TODO ここのエラーをどうするか考える
-                    try
+                    if (sp.BytesToRead != 0)
                     {
-                        length = sp.Read(receiveData, 0, 100);
+                        // TODO ここのエラーをどうするか考える
+                        try
+                        {
+                            length = sp.Read(receiveData, 0, 100);
+                        }
+                        catch (Exception ex) { }
                     }
-                    catch (Exception ex) { }
+                    else
+                    {
+                        length = 0;
+                    }
                 });
 
                 // 無意味なデータを無視

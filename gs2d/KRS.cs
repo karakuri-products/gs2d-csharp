@@ -26,7 +26,7 @@ namespace gs2d
         /// <param name="portName"></param>
         /// <param name="baudrate"></param>
         /// <param name="stopBits"></param>
-        public KRS(string portName, int baudrate = 115200, Parity parity = Parity.None) : base(portName, baudrate, parity)
+        public KRS(string portName, int baudrate = 115200, Parity parity = Parity.Even) : base(portName, baudrate, parity)
         {
 
         }
@@ -371,6 +371,33 @@ namespace gs2d
             command[2] = (byte)((tch) & 0x7F);
 
             getFunction<byte[]>(command, null, defaultWriteCallback);
+        }
+
+        public  void WriteTargetPosition(byte id, double position, ref double currentPosition)
+        {
+            byte[] command = new byte[3] { (byte)(0b10000000 | id), 0, 0 };
+
+            // Positionの値チェック
+            if (position < -135) position = -135;
+            else if (position > 135) position = 135;
+
+            // PositionをKRS用に変換
+            ushort tch = (ushort)(7500 - 29.629 * position);
+
+            command[1] = (byte)((tch >> 7) & 0x7F);
+            command[2] = (byte)((tch) & 0x7F);
+
+            Func<byte[], double> responseProcess = (response) =>
+            {
+                if (response != null && response.Length == 2)
+                {
+                    int tmpPosition = ((response[0] << 7) + response[1]);
+                    return (7500 - tmpPosition) / 29.629;
+                }
+                throw new InvalidResponseDataException("サーボからのレスポンスが不正です");
+            };
+
+            currentPosition = getFunction(command, responseProcess, null);
         }
 
         // Current Position
